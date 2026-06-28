@@ -31,6 +31,9 @@ app.get("/", (req, res) => {
   res.send("SportSpace API is running");
 });
 
+const teamRoutes = require("./routes/teamRoutes");
+app.use("/api/teams", teamRoutes);
+
 //socket.io
 io.on("connection", (socket) => {
   console.log("user connected:", socket.id);
