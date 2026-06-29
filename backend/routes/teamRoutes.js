@@ -2,14 +2,14 @@ const express = require("express");
 const router = express.Router();
 const {
   createTeam,
-  getAllTeam,
+  getAllTeams,
   getTeam,
   addMember,
   removeMember,
 } = require("../controllers/teamController");
 const { isLoggedIn, authorizeRoles } = require("../middleware/authMiddleware");
 
-route.post("/", isLoggedIn, authorizeRoles("admin", createTeam));
+router.post("/", isLoggedIn, authorizeRoles("admin", "captain"), createTeam);
 router.get("/", getAllTeams); //public
 router.get("/:id", getTeam); //public
 router.post(

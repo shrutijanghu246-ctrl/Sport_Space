@@ -26,6 +26,9 @@ app.use(cookieParser());
 const authRoutes = require("./routes/authRoutes");
 app.use("/api/auth", authRoutes);
 
+const postRoutes = require("./routes/postRoutes");
+app.use("/api/posts", postRoutes);
+
 //test routes
 app.get("/", (req, res) => {
   res.send("SportSpace API is running");

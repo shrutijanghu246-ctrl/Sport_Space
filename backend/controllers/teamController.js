@@ -26,7 +26,8 @@ const createTeam = async (req, res) => {
 const getAllTeams = async (req, res) => {
   try {
     const teams = await Team.find()
-      .populate("captain", "name email sport")
+      .populate("captain.boys", "name email sport")
+      .populate("captain.girls", "name email sport")
       .populate("coach", "name email")
       .select("-members"); //don't expose member list publicly
 
@@ -40,7 +41,8 @@ const getAllTeams = async (req, res) => {
 const getTeam = async (req, res) => {
   try {
     const team = await Team.findById(req.params.id)
-      .populate("captain", "name sport profilePic")
+      .populate("captain.boys", "name sport profilePic")
+      .populate("captain.girls", "name sport profilePic")
       .populate("coach", "name profilePic")
       .populate("members", "name sport profilePic");
 
@@ -104,4 +106,4 @@ const removeMember = async (req, res) => {
   }
 };
 
-module.exports = { createTeam, getAllTeam, getTeam, addMember, removeMember };
+module.exports = { createTeam, getAllTeams, getTeam, addMember, removeMember };
