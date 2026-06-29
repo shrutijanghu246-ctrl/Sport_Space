@@ -7,6 +7,13 @@ const register = async (req, res) => {
   try {
     const { name, email, password, role, sport } = req.body;
 
+    // Check email
+    if (!email.endsWith("@nitkkr.ac.in")) {
+      return res
+        .status(400)
+        .json({ message: "Only NIT KKR email addresses are allowed" });
+    }
+
     //check if user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
