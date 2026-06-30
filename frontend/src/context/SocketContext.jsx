@@ -14,6 +14,10 @@ export const SocketProvider = ({ children }) => {
     const newSocket = io("http://localhost:8080");
     setSocket(newSocket);
 
+    newSocket.on("connect", () => {
+      newSocket.emit("joinUser", user._id);
+    });
+
     return () => {
       newSocket.disconnect();
     };

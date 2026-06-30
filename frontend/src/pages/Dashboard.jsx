@@ -1,5 +1,6 @@
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import NotificationBell from "../components/NotificationBell";
 
 function Dashboard() {
   const { user, logout } = useAuth();
@@ -14,9 +15,12 @@ function Dashboard() {
     <div style={styles.container}>
       <div style={styles.navbar}>
         <h1 style={styles.logo}>🏅 SportSpace</h1>
-        <button onClick={handleLogout} style={styles.logoutBtn}>
-          Logout
-        </button>
+        <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+          <NotificationBell />
+          <button onClick={handleLogout} style={styles.logoutBtn}>
+            Logout
+          </button>
+        </div>
       </div>
 
       <div style={styles.content}>
