@@ -40,7 +40,7 @@ function Dashboard() {
             <h3>🏆 Achievements</h3>
             <p>Track your medals and awards</p>
           </div>
-          <div style={styles.card}>
+          <div style={styles.card} onClick={() => navigate("/chat")}>
             <h3>💬 Team Chat</h3>
             <p>Real-time chat with your team</p>
           </div>
