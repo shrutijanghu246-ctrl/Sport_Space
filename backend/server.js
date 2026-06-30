@@ -27,6 +27,7 @@ const authRoutes = require("./routes/authRoutes");
 app.use("/api/auth", authRoutes);
 
 const postRoutes = require("./routes/postRoutes");
+app.set("io", io); //make io accessible in controllers
 app.use("/api/posts", postRoutes);
 
 //test routes
@@ -42,6 +43,16 @@ const Message = require("./models/Message");
 
 io.on("connection", (socket) => {
   console.log("User connected:", socket.id);
+
+  socket.on("joinTeam", (teamId) => {
+    socket.join(teamId);
+    console.log(`Socket ${socket.id} joined team ${teamId}`);
+  });
+
+  socket.on("joinUser", (userId) => {
+    socket.join(userId);
+    console.log(`Socket ${socket.id} joined personal room ${userId}`);
+  });
 
   //users joins their team's chat room
   socket.on("joinTeam", (teamId) => {
@@ -77,6 +88,9 @@ io.on("connection", (socket) => {
 
 const messageRoutes = require("./routes/messageRoutes");
 app.use("/api/messages", messageRoutes);
+
+const notificationRoutes = require("./routes/notificationRoutes");
+app.use("/api/notifications", notificationRoutes);
 
 const PORT = process.env.PORT || 8080;
 server.listen(PORT, () => {

@@ -1,15 +1,16 @@
 const Post = require("../models/Post");
+const Notification = require("../models/Notification");
+const Team = require("../models/Team");
 
 //create post or log
 const createPost = async (req, res) => {
   try {
     const { type, content, isPublic, logDetails } = req.body;
 
-    //if type is log, make sure it's never public
     const postIsPublic = type === "log" ? false : isPublic;
 
     const post = await Post.create({
-      author: req.user._id, //comes from isLoggedIn middleware
+      author: req.user._id,
       team: req.user.team,
       type,
       content,
@@ -18,6 +19,31 @@ const createPost = async (req, res) => {
     });
 
     await post.populate("author", "name profilePic sport");
+
+    if (type === "post") {
+      const team = await Team.findById(req.user.team);
+      const io = req.app.get("io");
+
+      const recipientIds = team.members.filter(
+        (memberId) => memberId.toString() !== req.user._id.toString(),
+      );
+
+      const notifications = await Promise.all(
+        recipientIds.map((recipientId) =>
+          Notification.create({
+            recipient: recipientId,
+            sender: req.user._id,
+            type: "new_post",
+            message: `${req.user.name} shared a new post`,
+            relatedPost: post._id,
+          }),
+        ),
+      );
+
+      notifications.forEach((notif) => {
+        io.to(notif.recipient.toString()).emit("newNotification", notif);
+      });
+    }
 
     res.status(201).json({ message: "Post created successfully", post });
   } catch (err) {
