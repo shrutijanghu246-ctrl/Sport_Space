@@ -28,7 +28,7 @@ function Dashboard() {
         </div>
 
         <div style={styles.grid}>
-          <div style={styles.card}>
+          <div style={styles.card} onClick={() => navigate("/feed")}>
             <h3>📝 Feed</h3>
             <p>View and share posts with your team</p>
           </div>

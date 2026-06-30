@@ -3,6 +3,7 @@ import { useAuth } from "./context/AuthContext";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import Dashboard from "./pages/Dashboard";
+import Feed from "./pages/Feed";
 
 //protected route - redirect to login if not logged in
 const ProtectedRoute = ({ children }) => {
@@ -24,6 +25,14 @@ function App() {
         element={
           <ProtectedRoute>
             <Dashboard />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/feed"
+        element={
+          <ProtectedRoute>
+            <Feed />
           </ProtectedRoute>
         }
       />
