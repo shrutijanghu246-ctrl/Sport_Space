@@ -2,12 +2,24 @@ import { useState } from "react";
 import axiosInstance from "../utils/axios";
 import { useAuth } from "../context/AuthContext";
 
-function PostCard({ post, command }) {
+function PostCard({ post, onUpdate }) {
   const { user } = useAuth();
   const [showComments, setShowComments] = useState(false);
   const [commonText, setCommentText] = useState("");
 
   const hasLiked = post.likes?.includes(user?.id);
+  const canDelete =
+    user?.id === post.author?._id || ["captain", "admin"].includes(user?.role);
+
+  const handleDelete = async () => {
+    if (!window.confirm("Delete this post?")) return;
+    try {
+      await axiosInstance.delete(`/posts/${post._id}`);
+      onUpdate();
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   const handleLike = async () => {
     try {
@@ -70,6 +82,14 @@ function PostCard({ post, command }) {
         >
           💬 {post.comments?.length || 0}
         </button>
+        {canDelete && (
+          <button
+            onClick={handleDelete}
+            style={{ ...styles.actionBtn, color: "red" }}
+          >
+            🗑️ Delete
+          </button>
+        )}
       </div>
 
       {showComments && (
