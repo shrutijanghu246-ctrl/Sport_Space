@@ -38,13 +38,45 @@ const teamRoutes = require("./routes/teamRoutes");
 app.use("/api/teams", teamRoutes);
 
 //socket.io
-io.on("connection", (socket) => {
-  console.log("user connected:", socket.id);
+const Message = require("./models/Message");
 
-  socket.on("disconnected", () => {
-    console.log("user disconnected:", socket.id);
+io.on("connection", (socket) => {
+  console.log("User connected:", socket.id);
+
+  //users joins their team's chat room
+  socket.on("joinTeam", (teamId) => {
+    socket.join(teamId);
+    console.log(`Socket ${socket.id} joined team ${teamId}`);
+  });
+
+  //listen for new meassages
+  socket.on("sendMessage", async ({ teamId, senderId, text }) => {
+    try {
+      const message = await Message.create({
+        team: teamId,
+        sender: senderId,
+        text,
+      });
+
+      const populatedMessage = await message.populate(
+        "sender",
+        "name profilePic",
+      );
+
+      //send to everyone in that team's room (including sender)
+      io.to(teamId).emit("receiveMessage", populatedMessage);
+    } catch (err) {
+      console.error("Error saving message:", err);
+    }
+  });
+
+  socket.on("disconnect", () => {
+    console.log("User Disconnected:", socket.id);
   });
 });
+
+const messageRoutes = require("./routes/messageRoutes");
+app.use("/api/messages", messageRoutes);
 
 const PORT = process.env.PORT || 8080;
 server.listen(PORT, () => {
