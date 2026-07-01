@@ -40,7 +40,7 @@ function Dashboard() {
             <h3>👥 My Team</h3>
             <p>View your team members and activity</p>
           </div>
-          <div style={styles.card}>
+          <div style={styles.card} onClick={() => navigate("/achievements")}>
             <h3>🏆 Achievements</h3>
             <p>Track your medals and awards</p>
           </div>

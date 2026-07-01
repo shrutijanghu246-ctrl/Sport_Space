@@ -5,6 +5,7 @@ import RegisterPage from "./pages/RegisterPage";
 import Dashboard from "./pages/Dashboard";
 import Feed from "./pages/Feed";
 import Chat from "./pages/Chat";
+import Achievements from "./pages/Achievements";
 
 //protected route - redirect to login if not logged in
 const ProtectedRoute = ({ children }) => {
@@ -42,6 +43,14 @@ function App() {
         element={
           <ProtectedRoute>
             <Chat />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/achievements"
+        element={
+          <ProtectedRoute>
+            <Achievements />
           </ProtectedRoute>
         }
       />
