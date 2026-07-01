@@ -1,11 +1,13 @@
 import { useState } from "react";
 import axiosInstance from "../utils/axios";
 import { useAuth } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 function PostCard({ post, onUpdate }) {
   const { user } = useAuth();
   const [showComments, setShowComments] = useState(false);
-  const [commonText, setCommentText] = useState("");
+  const [commentText, setCommentText] = useState("");
+  const navigate = useNavigate();
 
   const hasLiked = post.likes?.includes(user?.id);
   const canDelete =
@@ -23,8 +25,8 @@ function PostCard({ post, onUpdate }) {
 
   const handleLike = async () => {
     try {
-      await axiosInstance.post(`/posts/${post.id}/like`);
-      ontimeupdate(); //refresh feed
+      await axiosInstance.post(`/posts/${post._id}/like`);
+      onUpdate(); //refresh feed
     } catch (err) {
       console.error(err);
     }
@@ -32,7 +34,7 @@ function PostCard({ post, onUpdate }) {
 
   const handleComment = async (e) => {
     e.preventDefault();
-    if (!setCommentText.trim()) return;
+    if (!commentText.trim()) return;
 
     try {
       await axiosInstance.post(`/posts/${post._id}/comment`, {
@@ -47,7 +49,10 @@ function PostCard({ post, onUpdate }) {
 
   return (
     <div style={styles.card}>
-      <div style={styles.header}>
+      <div
+        style={{ ...styles.header, cursor: "pointer" }}
+        onClick={() => navigate(`/profile/${post.author?._id}`)}
+      >
         <div style={styles.avatar}>{post.author?.name?.[0]}</div>
         <div>
           <p style={styles.authorName}>{post.author?.name}</p>

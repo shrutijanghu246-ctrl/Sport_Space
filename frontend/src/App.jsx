@@ -6,6 +6,7 @@ import Dashboard from "./pages/Dashboard";
 import Feed from "./pages/Feed";
 import Chat from "./pages/Chat";
 import Achievements from "./pages/Achievements";
+import PublicProfile from "./pages/PublicProfile";
 
 //protected route - redirect to login if not logged in
 const ProtectedRoute = ({ children }) => {
@@ -54,6 +55,7 @@ function App() {
           </ProtectedRoute>
         }
       />
+      <Route path="/profile/:userId" element={<PublicProfile />} />
       <Route path="*" element={<Navigate to="/login" />} />
     </Routes>
   );
