@@ -4,6 +4,7 @@ const {
   register,
   login,
   logout,
+  getPublicProfile,
   addPersonalAchievement,
   deletePersonalAchievement,
 } = require("../controllers/authController");
@@ -18,5 +19,6 @@ router.post("/login", login);
 router.post("/logout", logout);
 router.post("/achievements", isLoggedIn, addPersonalAchievement);
 router.delete("/achievements/:id", isLoggedIn, deletePersonalAchievement);
+router.get("/profile/:userId", getPublicProfile);
 
 module.exports = router;

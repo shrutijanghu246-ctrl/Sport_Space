@@ -145,10 +145,39 @@ const deletePersonalAchievement = async (req, res) => {
   }
 };
 
+//get public profile
+const getPublicProfile = async (req, res) => {
+  try {
+    const profileUser = await User.findById(req.params.userId).select(
+      "-password -email",
+    ); //hide sensitive info
+
+    if (!profileUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    //get their public posts too
+    const Post = require("../models/Post");
+    const posts = await Post.find({
+      author: profileUser._id,
+      isPublic: true,
+      type: "post",
+    })
+      .populate("author", "name sport profilePic")
+      .sort({ createdAt: -1 })
+      .limit(10);
+
+    res.status(200).json({ profileUser, posts });
+  } catch (err) {
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+};
+
 module.exports = {
   register,
   login,
   logout,
+  getPublicProfile,
   addPersonalAchievement,
   deletePersonalAchievement,
 };
