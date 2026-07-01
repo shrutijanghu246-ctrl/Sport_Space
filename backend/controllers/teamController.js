@@ -106,4 +106,51 @@ const removeMember = async (req, res) => {
   }
 };
 
-module.exports = { createTeam, getAllTeams, getTeam, addMember, removeMember };
+//add team achievements(captain/admin only)
+const addAchievement = async (req, res) => {
+  try {
+    const { title, competition, date } = req.body;
+    const team = await Team.findById(req.params.id);
+
+    if (!team) {
+      return res.status(404).json({ message: "Team not found" });
+    }
+
+    team.achievements.push({ title, competition, date });
+    await team.save();
+
+    res.status(201).json({ message: "Achievement added successfuly", team });
+  } catch (err) {
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+};
+
+//delete team acheievment (captain/admin only)
+const deleteAchievement = async (req, res) => {
+  try {
+    const team = await Team.findById(req.params.teamId);
+
+    if (!team) {
+      return res.status(404).json({ message: "Team not found" });
+    }
+
+    team.achievements = team.achievements.filter(
+      (a) => a._id.toString() !== req.params.achievementId,
+    );
+
+    await team.save();
+    res.status(200).json({ message: "Achievement deleted successfully" });
+  } catch (err) {
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+};
+
+module.exports = {
+  createTeam,
+  getAllTeams,
+  getTeam,
+  addMember,
+  removeMember,
+  addAchievement,
+  deleteAchievement,
+};

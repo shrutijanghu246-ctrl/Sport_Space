@@ -6,6 +6,8 @@ const {
   getTeam,
   addMember,
   removeMember,
+  addAchievement,
+  deleteAchievement,
 } = require("../controllers/teamController");
 const { isLoggedIn, authorizeRoles } = require("../middleware/authMiddleware");
 
@@ -23,6 +25,18 @@ router.delete(
   isLoggedIn,
   authorizeRoles("captain", "admin"),
   removeMember,
+);
+router.post(
+  "/:id/achievements",
+  isLoggedIn,
+  authorizeRoles("captain", "admin"),
+  addAchievement,
+);
+router.delete(
+  "/:teamId/achievements/:achievementId",
+  isLoggedIn,
+  authorizeRoles("captain", "admin"),
+  deleteAchievement,
 );
 
 module.exports = router;

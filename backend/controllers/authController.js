@@ -111,4 +111,44 @@ const logout = (req, res) => {
   res.status(200).json({ message: "Logged out successfully" });
 };
 
-module.exports = { register, login, logout };
+//add personal achievemet
+const addPersonalAchievement = async (req, res) => {
+  try {
+    const { title, date } = req.body;
+    const foundUser = await User.findById(req.user._id); // renamed to foundUser
+
+    foundUser.achievements.push({ title, date });
+    await foundUser.save();
+
+    res.status(201).json({
+      message: "Achievement added!",
+      achievements: foundUser.achievements,
+    });
+  } catch (err) {
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+};
+
+//delete personal achivement
+const deletePersonalAchievement = async (req, res) => {
+  try {
+    const foundUser = await User.findById(req.user._id); // renamed here too
+
+    foundUser.achievements = foundUser.achievements.filter(
+      (a) => a._id.toString() !== req.params.achievementId,
+    );
+    await foundUser.save();
+
+    res.status(200).json({ message: "Achievement deleted!" });
+  } catch (err) {
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+};
+
+module.exports = {
+  register,
+  login,
+  logout,
+  addPersonalAchievement,
+  deletePersonalAchievement,
+};
