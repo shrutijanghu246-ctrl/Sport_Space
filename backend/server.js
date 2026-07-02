@@ -98,6 +98,9 @@ app.use("/api/diet", dietRoutes);
 const exerciseRoutes = require("./routes/exerciseRoutes");
 app.use("/api/exercises", exerciseRoutes);
 
+const foodRoutes = require("./routes/foodRoutes");
+app.use("/api/foods", foodRoutes);
+
 const PORT = process.env.PORT || 8080;
 server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
