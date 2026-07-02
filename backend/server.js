@@ -92,6 +92,9 @@ app.use("/api/messages", messageRoutes);
 const notificationRoutes = require("./routes/notificationRoutes");
 app.use("/api/notifications", notificationRoutes);
 
+const dietRoutes = require("./routes/dietRoutes");
+app.use("/api/diet", dietRoutes);
+
 const PORT = process.env.PORT || 8080;
 server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
