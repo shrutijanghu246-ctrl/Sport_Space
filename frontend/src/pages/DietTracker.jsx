@@ -10,6 +10,8 @@ function DietTracker() {
   const [meals, setMeals] = useState([
     { name: "", calories: "", protein: "", carbs: "", fats: "" },
   ]);
+  const [foodSuggestions, setFoodSuggestions] = useState([]);
+  const [activeMealIndex, setActiveMealIndex] = useState(null);
 
   const [notes, setNotes] = useState("");
 
@@ -26,10 +28,45 @@ function DietTracker() {
     fetchLogs();
   }, []);
 
+  const searchFood = async (query, index) => {
+    if (!query || query.length < 2) {
+      setFoodSuggestions([]);
+      return;
+    }
+    try {
+      const res = await axiosInstance.get(`/foods/search?query=${query}`);
+      setFoodSuggestions(res.data.foods);
+      setActiveMealIndex(index);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   const handleMealChange = (index, field, value) => {
     const updated = [...meals];
     updated[index][field] = value;
     setMeals(updated);
+
+    if (field === "name") {
+      {
+        searchFood(value, index);
+      }
+    }
+  };
+
+  const selectFood = (food, index) => {
+    const updated = [...meals];
+    updated[index] = {
+      ...updated[index],
+      name: food.name,
+      calories: food.calories,
+      protein: food.protein,
+      carbs: food.carbs,
+      fats: food.fats,
+    };
+    setMeals(updated);
+    setFoodSuggestions([]);
+    setActiveMealIndex(null);
   };
 
   const addMealRow = () => {
@@ -92,16 +129,36 @@ function DietTracker() {
             <label style={styles.label}>Meals</label>
             {meals.map((meal, index) => (
               <div key={index} style={styles.mealRow}>
-                <input
-                  type="text"
-                  placeholder="Meal name"
-                  value={meal.name}
-                  onChange={(e) =>
-                    handleMealChange(index, "name", e.target.value)
-                  }
-                  style={{ ...styles.input, flex: 2 }}
-                  required
-                />
+                <div style={{ flex: 2, position: "relative" }}>
+                  <input
+                    type="text"
+                    placeholder="Meal name"
+                    value={meal.name}
+                    onChange={(e) =>
+                      handleMealChange(index, "name", e.target.value)
+                    }
+                    style={{ ...styles.input, width: "100%" }}
+                    required
+                  />
+                  {/* Food suggestions dropdown */}
+                  {activeMealIndex === index && foodSuggestions.length > 0 && (
+                    <div style={styles.suggestions}>
+                      {foodSuggestions.map((food) => (
+                        <div
+                          key={food._id}
+                          onClick={() => selectFood(food, index)}
+                          style={styles.suggestionItem}
+                        >
+                          <span>{food.name}</span>
+                          <span style={styles.suggestionMeta}>
+                            {food.calories} kcal | P:{food.protein}g C:
+                            {food.carbs}g F:{food.fats}g
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
                 <input
                   type="number"
                   placeholder="Calories"
@@ -370,6 +427,30 @@ const styles = {
     textAlign: "center",
     color: "#999",
     padding: "2rem",
+  },
+  suggestions: {
+    position: "absolute",
+    top: "100%",
+    left: 0,
+    right: 0,
+    backgroundColor: "white",
+    borderRadius: "8px",
+    boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+    zIndex: 10,
+    maxHeight: "200px",
+    overflowY: "auto",
+  },
+  suggestionItem: {
+    padding: "0.6rem 0.75rem",
+    cursor: "pointer",
+    borderBottom: "1px solid #f5f5f5",
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  suggestionMeta: {
+    fontSize: "0.75rem",
+    color: "#999",
   },
 };
 
