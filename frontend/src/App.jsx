@@ -8,6 +8,7 @@ import Chat from "./pages/Chat";
 import Achievements from "./pages/Achievements";
 import PublicProfile from "./pages/PublicProfile";
 import DietTracker from "./pages/DietTracker";
+import Exercises from "./pages/Exercises";
 
 //protected route - redirect to login if not logged in
 const ProtectedRoute = ({ children }) => {
@@ -62,6 +63,14 @@ function App() {
         element={
           <ProtectedRoute>
             <DietTracker />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/exercises"
+        element={
+          <ProtectedRoute>
+            <Exercises />
           </ProtectedRoute>
         }
       />

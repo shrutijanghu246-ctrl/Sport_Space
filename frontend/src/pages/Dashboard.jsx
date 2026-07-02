@@ -52,6 +52,10 @@ function Dashboard() {
             <h3>🥗 Diet Tracker</h3>
             <p>Log meals and track nutrition</p>
           </div>
+          <div style={styles.card} onClick={() => navigate("/exercises")}>
+            <h3>💪 Exercises</h3>
+            <p>Sport-specific exercise recommendations</p>
+          </div>
         </div>
       </div>
     </div>
