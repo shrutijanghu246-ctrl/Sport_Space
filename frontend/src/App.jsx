@@ -7,6 +7,7 @@ import Feed from "./pages/Feed";
 import Chat from "./pages/Chat";
 import Achievements from "./pages/Achievements";
 import PublicProfile from "./pages/PublicProfile";
+import DietTracker from "./pages/DietTracker";
 
 //protected route - redirect to login if not logged in
 const ProtectedRoute = ({ children }) => {
@@ -56,6 +57,14 @@ function App() {
         }
       />
       <Route path="/profile/:userId" element={<PublicProfile />} />
+      <Route
+        path="/diet"
+        element={
+          <ProtectedRoute>
+            <DietTracker />
+          </ProtectedRoute>
+        }
+      />
       <Route path="*" element={<Navigate to="/login" />} />
     </Routes>
   );

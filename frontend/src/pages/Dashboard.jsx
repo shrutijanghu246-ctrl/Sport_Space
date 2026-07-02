@@ -48,6 +48,10 @@ function Dashboard() {
             <h3>💬 Team Chat</h3>
             <p>Real-time chat with your team</p>
           </div>
+          <div style={styles.card} onClick={() => navigate("/diet")}>
+            <h3>🥗 Diet Tracker</h3>
+            <p>Log meals and track nutrition</p>
+          </div>
         </div>
       </div>
     </div>
