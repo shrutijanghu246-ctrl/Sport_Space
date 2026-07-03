@@ -43,6 +43,14 @@ const userSchema = new mongoose.Schema(
         date: Date,
       },
     ],
+    isVerified: {
+      type: Boolean,
+      default: false,
+    },
+    otp: {
+      code: String,
+      expiresAt: Date,
+    },
   },
   { timestamps: true },
 ); // adds createdAt and updatedAt automatically

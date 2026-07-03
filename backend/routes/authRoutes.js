@@ -4,6 +4,8 @@ const {
   register,
   login,
   logout,
+  verifyOTP,
+  resendOTP,
   getPublicProfile,
   addPersonalAchievement,
   deletePersonalAchievement,
@@ -20,5 +22,7 @@ router.post("/logout", logout);
 router.post("/achievements", isLoggedIn, addPersonalAchievement);
 router.delete("/achievements/:id", isLoggedIn, deletePersonalAchievement);
 router.get("/profile/:userId", getPublicProfile);
+router.post("/verify-otp", verifyOTP);
+router.post("/resend-otp", resendOTP);
 
 module.exports = router;
