@@ -9,6 +9,7 @@ function Chat() {
   const [messages, setMessages] = useState([]);
   const [text, setText] = useState("");
   const messagesEndRef = useRef(null);
+  const [selectedMessage, setSelectedMessage] = useState(null);
 
   useEffect(() => {
     const fetchMessages = async () => {
@@ -22,6 +23,20 @@ function Chat() {
     if (user?.team) fetchMessages();
   }, [user?.team]);
 
+  const [teamName, setTeamName] = useState("");
+
+  useEffect(() => {
+    const fetchTeamName = async () => {
+      try {
+        const res = await axiosInstance.get(`/teams/${user.team}`);
+        setTeamName(res.data.team.name);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    if (user?.team) fetchTeamName();
+  }, [user?.team]);
+
   useEffect(() => {
     if (!socket || !user?.team) return;
 
@@ -31,8 +46,23 @@ function Chat() {
       setMessages((prev) => [...prev, newMessage]);
     });
 
+    socket.on("messageDeleted", ({ messageId }) => {
+      setMessages((prev) =>
+        prev.map((m) =>
+          m._id === messageId
+            ? {
+                ...m,
+                text: "This message was deleted",
+                deletedForEveryone: true,
+              }
+            : m,
+        ),
+      );
+    });
+
     return () => {
       socket.off("receiveMessage");
+      socket.off("messageDeleted");
     };
   }, [socket, user?.team]);
 
@@ -59,9 +89,41 @@ function Chat() {
     setText("");
   };
 
+  const handleDeleteForMe = async (messageId) => {
+    try {
+      await axiosInstance.delete(`/messages/${messageId}/delete-for-me`);
+      setMessages((prev) => prev.filter((m) => m._id !== messageId));
+      setSelectedMessage(null);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleDeleteForEveryone = async (messageId) => {
+    try {
+      await axiosInstance.delete(`/messages/${messageId}/delete-for-everyone`);
+      setMessages((prev) =>
+        prev.map((m) =>
+          m._id === messageId
+            ? {
+                ...m,
+                text: "This message was deleted",
+                deletedForEveryone: true,
+              }
+            : m,
+        ),
+      );
+      setSelectedMessage(null);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   return (
     <div style={styles.container}>
-      <div style={styles.header}>💬 Team Chat</div>
+      <div style={styles.header}>
+        💬 {teamName ? `${teamName} Team Chat` : "Team Chat"}
+      </div>
 
       <div style={styles.messagesBox}>
         {messages.map((msg) => {
@@ -74,9 +136,44 @@ function Chat() {
                 justifyContent: isMine ? "flex-end" : "flex-start",
               }}
             >
-              <div style={isMine ? styles.myBubble : styles.theirBubble}>
+              <div
+                style={isMine ? styles.myBubble : styles.theirBubble}
+                onClick={() =>
+                  setSelectedMessage(
+                    selectedMessage === msg._id ? null : msg._id,
+                  )
+                }
+              >
                 {!isMine && <p style={styles.senderName}>{msg.sender?.name}</p>}
-                <p>{msg.text}</p>
+                <p style={msg.deletedForEveryone ? styles.deletedText : {}}>
+                  {msg.text}
+                </p>
+
+                {/* Delete options */}
+                {selectedMessage === msg._id && !msg.deletedForEveryone && (
+                  <div style={styles.deleteOptions}>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteForMe(msg._id);
+                      }}
+                      style={styles.deleteOptionBtn}
+                    >
+                      Delete for me
+                    </button>
+                    {isMine && (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteForEveryone(msg._id);
+                        }}
+                        style={{ ...styles.deleteOptionBtn, color: "#ef4444" }}
+                      >
+                        Delete for everyone
+                      </button>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
           );
@@ -168,6 +265,27 @@ const styles = {
     color: "white",
     cursor: "pointer",
     fontWeight: "600",
+  },
+  deletedText: {
+    color: "rgba(255,255,255,0.6)",
+    fontStyle: "italic",
+  },
+  deleteOptions: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "0.25rem",
+    marginTop: "0.5rem",
+    borderTop: "1px solid rgba(255,255,255,0.2)",
+    paddingTop: "0.5rem",
+  },
+  deleteOptionBtn: {
+    background: "none",
+    border: "none",
+    color: "white",
+    cursor: "pointer",
+    fontSize: "0.75rem",
+    textAlign: "left",
+    padding: "0.2rem 0",
   },
 };
 
