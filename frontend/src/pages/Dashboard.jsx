@@ -36,7 +36,7 @@ function Dashboard() {
             <h3>📝 Feed</h3>
             <p>View and share posts with your team</p>
           </div>
-          <div style={styles.card}>
+          <div style={styles.card} onClick={() => navigate("/team")}>
             <h3>👥 My Team</h3>
             <p>View your team members and activity</p>
           </div>

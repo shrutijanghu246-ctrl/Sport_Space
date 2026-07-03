@@ -9,6 +9,7 @@ import Achievements from "./pages/Achievements";
 import PublicProfile from "./pages/PublicProfile";
 import DietTracker from "./pages/DietTracker";
 import Exercises from "./pages/Exercises";
+import TeamPage from "./pages/TeamPage";
 
 //protected route - redirect to login if not logged in
 const ProtectedRoute = ({ children }) => {
@@ -71,6 +72,14 @@ function App() {
         element={
           <ProtectedRoute>
             <Exercises />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/team"
+        element={
+          <ProtectedRoute>
+            <TeamPage />
           </ProtectedRoute>
         }
       />
