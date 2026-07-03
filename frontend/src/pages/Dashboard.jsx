@@ -1,122 +1,87 @@
-import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import NotificationBell from "../components/NotificationBell";
+import { useAuth } from "../context/AuthContext";
+import {
+  Newspaper,
+  Users,
+  Trophy,
+  MessageCircle,
+  Salad,
+  Dumbbell,
+} from "lucide-react";
+import styles from "./Dashboard.module.css";
 
 function Dashboard() {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
 
-  const handleLogout = async () => {
-    await logout();
-    navigate("/login");
-  };
+  const cards = [
+    {
+      icon: <Newspaper size={22} />,
+      title: "Feed",
+      desc: "View and share posts with your team",
+      path: "/feed",
+    },
+    {
+      icon: <Users size={22} />,
+      title: "My Team",
+      desc: "View your team members and activity",
+      path: "/team",
+    },
+    {
+      icon: <Trophy size={22} />,
+      title: "Achievements",
+      desc: "Track your medals and awards",
+      path: "/achievements",
+    },
+    {
+      icon: <MessageCircle size={22} />,
+      title: "Team Chat",
+      desc: "Real-time chat with your team",
+      path: "/chat",
+    },
+    {
+      icon: <Salad size={22} />,
+      title: "Diet Tracker",
+      desc: "Log meals and track nutrition",
+      path: "/diet",
+    },
+    {
+      icon: <Dumbbell size={22} />,
+      title: "Exercises",
+      desc: "Sport-specific exercise recommendations",
+      path: "/exercises",
+    },
+  ];
 
   return (
-    <div style={styles.container}>
-      <div style={styles.navbar}>
-        <h1 style={styles.logo}>🏅 SportSpace</h1>
-        <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-          <NotificationBell />
-          <button onClick={handleLogout} style={styles.logoutBtn}>
-            Logout
-          </button>
-        </div>
-      </div>
-
-      <div style={styles.content}>
-        <div style={styles.welcomeCard}>
-          <h2>Welcome back, {user?.name}! 👋</h2>
-          <p style={styles.roleTag}>
-            {user?.role} • {user?.sport}
+    <div className={styles.container}>
+      <div className={styles.welcomeCard}>
+        <div className={styles.welcomeText}>
+          <h2>Welcome back, {user?.name?.split(" ")[0]}! 👋</h2>
+          <p>
+            {user?.role} • {user?.sport} • NIT Kurukshetra
           </p>
         </div>
+        <span className={styles.welcomeEmoji}>🏅</span>
+      </div>
 
-        <div style={styles.grid}>
-          <div style={styles.card} onClick={() => navigate("/feed")}>
-            <h3>📝 Feed</h3>
-            <p>View and share posts with your team</p>
+      <p className={styles.sectionTitle}>Quick Access</p>
+
+      <div className={styles.grid}>
+        {cards.map((card) => (
+          <div
+            key={card.path}
+            className={styles.card}
+            onClick={() => navigate(card.path)}
+          >
+            <div className={styles.cardIcon}>{card.icon}</div>
+            <p className={styles.cardTitle}>{card.title}</p>
+            <p className={styles.cardDesc}>{card.desc}</p>
           </div>
-          <div style={styles.card} onClick={() => navigate("/team")}>
-            <h3>👥 My Team</h3>
-            <p>View your team members and activity</p>
-          </div>
-          <div style={styles.card} onClick={() => navigate("/achievements")}>
-            <h3>🏆 Achievements</h3>
-            <p>Track your medals and awards</p>
-          </div>
-          <div style={styles.card} onClick={() => navigate("/chat")}>
-            <h3>💬 Team Chat</h3>
-            <p>Real-time chat with your team</p>
-          </div>
-          <div style={styles.card} onClick={() => navigate("/diet")}>
-            <h3>🥗 Diet Tracker</h3>
-            <p>Log meals and track nutrition</p>
-          </div>
-          <div style={styles.card} onClick={() => navigate("/exercises")}>
-            <h3>💪 Exercises</h3>
-            <p>Sport-specific exercise recommendations</p>
-          </div>
-        </div>
+        ))}
       </div>
     </div>
   );
 }
-
-const styles = {
-  container: {
-    minHeight: "100vh",
-    backgroundColor: "#f0f2f5",
-  },
-  navbar: {
-    backgroundColor: "white",
-    padding: "1rem 2rem",
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-  },
-  logo: {
-    fontSize: "1.5rem",
-  },
-  logoutBtn: {
-    padding: "0.5rem 1rem",
-    borderRadius: "8px",
-    border: "none",
-    backgroundColor: "#ef4444",
-    color: "white",
-    cursor: "pointer",
-    fontWeight: "600",
-  },
-  content: {
-    maxWidth: "1000px",
-    margin: "2rem auto",
-    padding: "0 1rem",
-  },
-  welcomeCard: {
-    backgroundColor: "white",
-    padding: "1.5rem 2rem",
-    borderRadius: "12px",
-    boxShadow: "0 2px 4px rgba(0,0,0,0.05)",
-    marginBottom: "1.5rem",
-  },
-  roleTag: {
-    color: "#2563eb",
-    fontWeight: "600",
-    marginTop: "0.25rem",
-    textTransform: "capitalize",
-  },
-  grid: {
-    display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-    gap: "1rem",
-  },
-  card: {
-    backgroundColor: "white",
-    padding: "1.5rem",
-    borderRadius: "12px",
-    boxShadow: "0 2px 4px rgba(0,0,0,0.05)",
-    cursor: "pointer",
-  },
-};
 
 export default Dashboard;

@@ -1,5 +1,6 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import { useAuth } from "./context/AuthContext";
+import Navbar from "./components/Navbar";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import Dashboard from "./pages/Dashboard";
@@ -12,14 +13,21 @@ import Exercises from "./pages/Exercises";
 import TeamPage from "./pages/TeamPage";
 import VerifyOTP from "./pages/VerifyOTP";
 
-//protected route - redirect to login if not logged in
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
 
-  if (loading) return <div>Loading...</div>;
+  if (loading)
+    return (
+      <div style={{ padding: "2rem", textAlign: "center" }}>Loading...</div>
+    );
   if (!user) return <Navigate to="/login" />;
 
-  return children;
+  return (
+    <>
+      <Navbar />
+      {children}
+    </>
+  );
 };
 
 function App() {
@@ -27,6 +35,8 @@ function App() {
     <Routes>
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
+      <Route path="/verify-otp" element={<VerifyOTP />} />
+      <Route path="/profile/:userId" element={<PublicProfile />} />
       <Route
         path="/dashboard"
         element={
@@ -59,7 +69,6 @@ function App() {
           </ProtectedRoute>
         }
       />
-      <Route path="/profile/:userId" element={<PublicProfile />} />
       <Route
         path="/diet"
         element={
@@ -84,7 +93,6 @@ function App() {
           </ProtectedRoute>
         }
       />
-      <Route path="/verify-otp" element={<VerifyOTP />} />
       <Route path="*" element={<Navigate to="/login" />} />
     </Routes>
   );
