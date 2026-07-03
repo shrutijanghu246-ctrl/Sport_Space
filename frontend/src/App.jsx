@@ -10,6 +10,7 @@ import PublicProfile from "./pages/PublicProfile";
 import DietTracker from "./pages/DietTracker";
 import Exercises from "./pages/Exercises";
 import TeamPage from "./pages/TeamPage";
+import VerifyOTP from "./pages/VerifyOTP";
 
 //protected route - redirect to login if not logged in
 const ProtectedRoute = ({ children }) => {
@@ -83,6 +84,7 @@ function App() {
           </ProtectedRoute>
         }
       />
+      <Route path="/verify-otp" element={<VerifyOTP />} />
       <Route path="*" element={<Navigate to="/login" />} />
     </Routes>
   );

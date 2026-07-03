@@ -1,81 +1,86 @@
 import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import axiosInstance from "../utils/axios";
 import { useAuth } from "../context/AuthContext";
 
-function LoginPage() {
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
+function VerifyOTP() {
+  const [otp, setOtp] = useState("");
   const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
   const { login } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  //userId passed from RegisterPages via navigation state
+  const userId = location.state?.userId;
 
-  const handleSubmit = async (e) => {
+  const handleVerify = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError("");
 
     try {
-      const res = await axiosInstance.post("/auth/login", formData);
+      const res = await axiosInstance.post("/auth/verify-otp", { userId, otp });
       login(res.data.user);
       navigate("/dashboard");
     } catch (err) {
-      // If unverified, redirect to OTP page
-      if (err.response?.data?.userId) {
-        navigate("/verify-otp", {
-          state: { userId: err.response.data.userId },
-        });
-      } else {
-        setError(err.response?.data?.message || "Something went wrong");
-      }
+      setError(err.response?.data?.message || "Something went wrong");
     } finally {
       setLoading(false);
     }
   };
 
+  const handleResend = async () => {
+    try {
+      setMessage("");
+      setError("");
+      await axiosInstance.post("/auth/resend-otp", { userId });
+      setMessage("OTP resent! Check your email.");
+    } catch (err) {
+      setError(err.response?.data?.message || "Something went wrong");
+    }
+  };
+
+  if (!userId) {
+    navigate("/register");
+    return null;
+  }
+
   return (
     <div style={styles.container}>
       <div style={styles.card}>
         <h1 style={styles.logo}>🏅 SportSpace</h1>
-        <h2 style={styles.title}>Welcome back</h2>
-        <p style={styles.subtitle}>Login to your team's space</p>
+        <h2 style={styles.title}>Verify your email</h2>
+        <p style={styles.subtitle}>
+          We've sent a 6-digit OTP to your email. Enter it below to activate
+          your account.
+        </p>
 
         {error && <p style={styles.error}>{error}</p>}
+        {message && <p style={styles.success}>{message}</p>}
 
-        <form onSubmit={handleSubmit} style={styles.form}>
+        <form onSubmit={handleVerify} style={styles.form}>
           <input
-            type="email"
-            name="email"
-            placeholder="Email"
-            value={formData.email}
-            onChange={handleChange}
+            type="text"
+            placeholder="Enter 6-digit OTP"
+            value={otp}
+            onChange={(e) => setOtp(e.target.value)}
             style={styles.input}
-            required
-          />
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            value={formData.password}
-            onChange={handleChange}
-            style={styles.input}
+            maxLength={6}
             required
           />
           <button type="submit" style={styles.button} disabled={loading}>
-            {loading ? "Logging in..." : "Login"}
+            {loading ? "Verifying..." : "Verify Email"}
           </button>
         </form>
 
-        <p style={styles.link}>
-          Don't have an account? <Link to="/register">Register here</Link>
+        <p style={styles.resend}>
+          Didn't receive OTP?{" "}
+          <button onClick={handleResend} style={styles.resendBtn}>
+            Resend OTP
+          </button>
         </p>
       </div>
     </div>
@@ -112,9 +117,17 @@ const styles = {
     textAlign: "center",
     color: "#666",
     marginBottom: "1.5rem",
+    fontSize: "0.9rem",
+    lineHeight: "1.5",
   },
   error: {
     color: "red",
+    textAlign: "center",
+    marginBottom: "1rem",
+    fontSize: "0.9rem",
+  },
+  success: {
+    color: "#22c55e",
     textAlign: "center",
     marginBottom: "1rem",
     fontSize: "0.9rem",
@@ -128,8 +141,9 @@ const styles = {
     padding: "0.75rem 1rem",
     borderRadius: "8px",
     border: "1px solid #ddd",
-    fontSize: "1rem",
-    outline: "none",
+    fontSize: "1.5rem",
+    textAlign: "center",
+    letterSpacing: "0.5rem",
   },
   button: {
     padding: "0.75rem",
@@ -141,12 +155,20 @@ const styles = {
     cursor: "pointer",
     fontWeight: "600",
   },
-  link: {
+  resend: {
     textAlign: "center",
     marginTop: "1rem",
     fontSize: "0.9rem",
     color: "#666",
   },
+  resendBtn: {
+    background: "none",
+    border: "none",
+    color: "#2563eb",
+    cursor: "pointer",
+    fontWeight: "600",
+    fontSize: "0.9rem",
+  },
 };
 
-export default LoginPage;
+export default VerifyOTP;

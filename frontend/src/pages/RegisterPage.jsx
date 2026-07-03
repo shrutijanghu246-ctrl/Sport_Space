@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import axiosInstance from "../utils/axios";
-import { useAuth } from "../context/AuthContext";
 
 function RegisterPage() {
   const [formData, setFormData] = useState({
@@ -14,7 +13,6 @@ function RegisterPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -26,16 +24,10 @@ function RegisterPage() {
     setLoading(true);
     setError("");
 
-    if (!formData.email.endsWith("@nitkkr.ac.in")) {
-      setError("Please use your NIT KKR college email (@nitkkr.ac.in)");
-      setLoading(false);
-      return;
-    }
-
     try {
       const res = await axiosInstance.post("/auth/register", formData);
-      login(res.data.user);
-      navigate("/dashboard");
+      // Navigate to OTP page with userId
+      navigate("/verify-otp", { state: { userId: res.data.userId } });
     } catch (err) {
       setError(err.response?.data?.message || "Something went wrong");
     } finally {
