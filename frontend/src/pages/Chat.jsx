@@ -2,14 +2,17 @@ import { useState, useEffect, useRef } from "react";
 import axiosInstance from "../utils/axios";
 import { useAuth } from "../context/AuthContext";
 import { useSocket } from "../context/SocketContext";
+import { MessageCircle, Send } from "lucide-react";
+import styles from "./Chat.module.css";
 
 function Chat() {
   const { user } = useAuth();
   const socket = useSocket();
   const [messages, setMessages] = useState([]);
   const [text, setText] = useState("");
-  const messagesEndRef = useRef(null);
+  const [teamName, setTeamName] = useState("");
   const [selectedMessage, setSelectedMessage] = useState(null);
+  const messagesEndRef = useRef(null);
 
   useEffect(() => {
     const fetchMessages = async () => {
@@ -22,8 +25,6 @@ function Chat() {
     };
     if (user?.team) fetchMessages();
   }, [user?.team]);
-
-  const [teamName, setTeamName] = useState("");
 
   useEffect(() => {
     const fetchTeamName = async () => {
@@ -73,19 +74,11 @@ function Chat() {
   const handleSend = (e) => {
     e.preventDefault();
     if (!text.trim()) return;
-
-    console.log("Sending message:", {
-      teamId: user.team,
-      senderId: user._id,
-      text,
-    });
-
     socket.emit("sendMessage", {
       teamId: user.team,
       senderId: user._id,
       text,
     });
-
     setText("");
   };
 
@@ -120,173 +113,92 @@ function Chat() {
   };
 
   return (
-    <div style={styles.container}>
-      <div style={styles.header}>
-        💬 {teamName ? `${teamName} Team Chat` : "Team Chat"}
-      </div>
+    <div className={styles.container}>
+      <div className={styles.chatBox}>
+        <div className={styles.header}>
+          <MessageCircle
+            size={20}
+            className={styles.headerIcon}
+            color="#f59e0b"
+          />
+          <span className={styles.headerTitle}>
+            {teamName ? `${teamName} Team Chat` : "Team Chat"}
+          </span>
+        </div>
 
-      <div style={styles.messagesBox}>
-        {messages.map((msg) => {
-          const isMine = msg.sender?._id?.toString() === user._id?.toString();
-          return (
-            <div
-              key={msg._id}
-              style={{
-                ...styles.messageRow,
-                justifyContent: isMine ? "flex-end" : "flex-start",
-              }}
-            >
+        <div className={styles.messagesBox}>
+          {messages.map((msg) => {
+            const isMine = msg.sender?._id?.toString() === user._id?.toString();
+            return (
               <div
-                style={isMine ? styles.myBubble : styles.theirBubble}
-                onClick={() =>
-                  setSelectedMessage(
-                    selectedMessage === msg._id ? null : msg._id,
-                  )
-                }
+                key={msg._id}
+                className={styles.messageRow}
+                style={{ justifyContent: isMine ? "flex-end" : "flex-start" }}
               >
-                {!isMine && <p style={styles.senderName}>{msg.sender?.name}</p>}
-                <p style={msg.deletedForEveryone ? styles.deletedText : {}}>
-                  {msg.text}
-                </p>
+                <div
+                  className={isMine ? styles.myBubble : styles.theirBubble}
+                  onClick={() =>
+                    setSelectedMessage(
+                      selectedMessage === msg._id ? null : msg._id,
+                    )
+                  }
+                >
+                  {!isMine && (
+                    <p className={styles.senderName}>{msg.sender?.name}</p>
+                  )}
+                  <p
+                    className={msg.deletedForEveryone ? styles.deletedText : ""}
+                  >
+                    {msg.text}
+                  </p>
 
-                {/* Delete options */}
-                {selectedMessage === msg._id && !msg.deletedForEveryone && (
-                  <div style={styles.deleteOptions}>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleDeleteForMe(msg._id);
-                      }}
-                      style={styles.deleteOptionBtn}
-                    >
-                      Delete for me
-                    </button>
-                    {isMine && (
+                  {selectedMessage === msg._id && !msg.deletedForEveryone && (
+                    <div className={styles.deleteOptions}>
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          handleDeleteForEveryone(msg._id);
+                          handleDeleteForMe(msg._id);
                         }}
-                        style={{ ...styles.deleteOptionBtn, color: "#ef4444" }}
+                        className={styles.deleteOptionBtn}
                       >
-                        Delete for everyone
+                        Delete for me
                       </button>
-                    )}
-                  </div>
-                )}
+                      {isMine && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeleteForEveryone(msg._id);
+                          }}
+                          className={`${styles.deleteOptionBtn} ${styles.deleteForEveryoneBtn}`}
+                        >
+                          Delete for everyone
+                        </button>
+                      )}
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
-          );
-        })}
-        <div ref={messagesEndRef} />
-      </div>
+            );
+          })}
+          <div ref={messagesEndRef} />
+        </div>
 
-      <form onSubmit={handleSend} style={styles.inputForm}>
-        <input
-          type="text"
-          placeholder="Type a message..."
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          style={styles.input}
-        />
-        <button type="submit" style={styles.sendBtn}>
-          Send
-        </button>
-      </form>
+        <form onSubmit={handleSend} className={styles.inputForm}>
+          <input
+            type="text"
+            placeholder="Type a message..."
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            className={styles.input}
+          />
+          <button type="submit" className={styles.sendBtn}>
+            <Send size={16} />
+            Send
+          </button>
+        </form>
+      </div>
     </div>
   );
 }
-
-const styles = {
-  container: {
-    maxWidth: "600px",
-    margin: "0 auto",
-    height: "calc(100vh - 100px)",
-    display: "flex",
-    flexDirection: "column",
-    backgroundColor: "white",
-    borderRadius: "12px",
-    overflow: "hidden",
-    boxShadow: "0 2px 4px rgba(0,0,0,0.05)",
-  },
-  header: {
-    padding: "1rem",
-    borderBottom: "1px solid #eee",
-    fontWeight: "600",
-    fontSize: "1.1rem",
-  },
-  messagesBox: {
-    flex: 1,
-    overflowY: "auto",
-    padding: "1rem",
-    display: "flex",
-    flexDirection: "column",
-    gap: "0.5rem",
-  },
-  messageRow: {
-    display: "flex",
-  },
-  myBubble: {
-    backgroundColor: "#2563eb",
-    color: "white",
-    padding: "0.5rem 0.75rem",
-    borderRadius: "12px",
-    maxWidth: "70%",
-  },
-  theirBubble: {
-    backgroundColor: "#f0f2f5",
-    padding: "0.5rem 0.75rem",
-    borderRadius: "12px",
-    maxWidth: "70%",
-  },
-  senderName: {
-    fontSize: "0.75rem",
-    fontWeight: "600",
-    marginBottom: "0.2rem",
-    color: "#2563eb",
-  },
-  inputForm: {
-    display: "flex",
-    gap: "0.5rem",
-    padding: "1rem",
-    borderTop: "1px solid #eee",
-  },
-  input: {
-    flex: 1,
-    padding: "0.75rem",
-    borderRadius: "8px",
-    border: "1px solid #ddd",
-  },
-  sendBtn: {
-    padding: "0.75rem 1.5rem",
-    borderRadius: "8px",
-    border: "none",
-    backgroundColor: "#2563eb",
-    color: "white",
-    cursor: "pointer",
-    fontWeight: "600",
-  },
-  deletedText: {
-    color: "rgba(255,255,255,0.6)",
-    fontStyle: "italic",
-  },
-  deleteOptions: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "0.25rem",
-    marginTop: "0.5rem",
-    borderTop: "1px solid rgba(255,255,255,0.2)",
-    paddingTop: "0.5rem",
-  },
-  deleteOptionBtn: {
-    background: "none",
-    border: "none",
-    color: "white",
-    cursor: "pointer",
-    fontSize: "0.75rem",
-    textAlign: "left",
-    padding: "0.2rem 0",
-  },
-};
 
 export default Chat;

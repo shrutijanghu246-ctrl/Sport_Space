@@ -1,28 +1,22 @@
 import { useState, useEffect } from "react";
 import axiosInstance from "../utils/axios";
 import { useAuth } from "../context/AuthContext";
+import { Trophy, Medal, Plus, Trash2 } from "lucide-react";
+import styles from "./Achievements.module.css";
 
 function Achievements() {
   const { user } = useAuth();
   const [teamAchievements, setTeamAchievements] = useState([]);
   const [personalAchievements, setPersonalAchievements] = useState([]);
   const [activeTab, setActiveTab] = useState("team");
-
-  //team achievements form
   const [teamForm, setTeamForm] = useState({
     title: "",
     competition: "",
     date: "",
   });
-
-  //personal achievements form
-  const [personalForm, setPersonalForm] = useState({
-    title: "",
-    date: "",
-  });
+  const [personalForm, setPersonalForm] = useState({ title: "", date: "" });
 
   const isPrivileged = ["captain", "admin"].includes(user?.role);
-  console.log("user role:", user?.role, "isPrivileged:", isPrivileged);
 
   const fetchTeamAchievements = async () => {
     try {
@@ -36,7 +30,6 @@ function Achievements() {
   const fetchPersonalAchievements = async () => {
     try {
       const res = await axiosInstance.get("/auth/me");
-      console.log("personal achievements response:", res.data);
       setPersonalAchievements(res.data.user.achievements);
     } catch (err) {
       console.error(err);
@@ -44,8 +37,10 @@ function Achievements() {
   };
 
   useEffect(() => {
-    fetchTeamAchievements();
-    fetchPersonalAchievements();
+    if (user?.team) {
+      fetchTeamAchievements();
+      fetchPersonalAchievements();
+    }
   }, [user?.team]);
 
   const handleAddTeamAchievement = async (e) => {
@@ -85,11 +80,9 @@ function Achievements() {
   };
 
   const handleDeletePersonalAchievement = async (achievementId) => {
-    console.log("Deleting achievement ID:", achievementId);
     if (!window.confirm("Delete this achievement?")) return;
     try {
       await axiosInstance.delete(`/auth/achievements/${achievementId}`);
-      // Update state directly instead of refetching
       setPersonalAchievements((prev) =>
         prev.filter((a) => a._id !== achievementId),
       );
@@ -99,25 +92,22 @@ function Achievements() {
   };
 
   return (
-    <div style={styles.container}>
-      <h2 style={styles.heading}>🏆 Achievements Wall</h2>
+    <div className={styles.container}>
+      <h2 className={styles.heading}>
+        <Trophy size={24} color="#f59e0b" />
+        Achievements Wall
+      </h2>
 
-      <div style={styles.tabs}>
+      <div className={styles.tabs}>
         <button
           onClick={() => setActiveTab("team")}
-          style={{
-            ...styles.tab,
-            ...(activeTab === "team" ? styles.activeTab : {}),
-          }}
+          className={`${styles.tab} ${activeTab === "team" ? styles.activeTab : ""}`}
         >
           Team Achievements
         </button>
         <button
           onClick={() => setActiveTab("personal")}
-          style={{
-            ...styles.tab,
-            ...(activeTab === "personal" ? styles.activeTab : {}),
-          }}
+          className={`${styles.tab} ${activeTab === "personal" ? styles.activeTab : ""}`}
         >
           My Achievements
         </button>
@@ -126,62 +116,80 @@ function Achievements() {
       {activeTab === "team" && (
         <div>
           {isPrivileged && (
-            <form onSubmit={handleAddTeamAchievement} style={styles.form}>
-              <h3 style={styles.formTitle}>Add Team Achievement</h3>
-              <input
-                type="text"
-                placeholder="Title (e.g. Gold Medal — 100m Sprint)"
-                value={teamForm.title}
-                onChange={(e) =>
-                  setTeamForm({ ...teamForm, title: e.target.value })
-                }
-                style={styles.input}
-                required
-              />
-              <input
-                type="text"
-                placeholder="Competition (e.g. Inter-NIT 2026)"
-                value={teamForm.competition}
-                onChange={(e) =>
-                  setTeamForm({ ...teamForm, competition: e.target.value })
-                }
-                style={styles.input}
-                required
-              />
-              <input
-                type="date"
-                value={teamForm.date}
-                onChange={(e) =>
-                  setTeamForm({ ...teamForm, date: e.target.value })
-                }
-                style={styles.input}
-                required
-              />
-              <button type="submit" style={styles.submitBtn}>
-                Add Achievement 🏅
-              </button>
-            </form>
+            <div className={styles.form}>
+              <p className={styles.formTitle}>
+                <Plus size={18} color="#f59e0b" />
+                Add Team Achievement
+              </p>
+              <form
+                onSubmit={handleAddTeamAchievement}
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "0.75rem",
+                }}
+              >
+                <input
+                  type="text"
+                  placeholder="Title (e.g. Gold Medal — 100m Sprint)"
+                  value={teamForm.title}
+                  onChange={(e) =>
+                    setTeamForm({ ...teamForm, title: e.target.value })
+                  }
+                  className={styles.input}
+                  required
+                />
+                <input
+                  type="text"
+                  placeholder="Competition (e.g. Inter-NIT 2026)"
+                  value={teamForm.competition}
+                  onChange={(e) =>
+                    setTeamForm({ ...teamForm, competition: e.target.value })
+                  }
+                  className={styles.input}
+                  required
+                />
+                <input
+                  type="date"
+                  value={teamForm.date}
+                  onChange={(e) =>
+                    setTeamForm({ ...teamForm, date: e.target.value })
+                  }
+                  className={styles.input}
+                  required
+                />
+                <button type="submit" className={styles.submitBtn}>
+                  <Plus size={16} />
+                  Add Achievement
+                </button>
+              </form>
+            </div>
           )}
 
-          <div style={styles.achievementsList}>
+          <div className={styles.achievementsList}>
             {teamAchievements.length === 0 ? (
-              <p style={styles.empty}>No team achievements yet!</p>
+              <p className={styles.empty}>No team achievements yet!</p>
             ) : (
               teamAchievements.map((a) => (
-                <div key={a._id} style={styles.achievementCard}>
-                  <div>
-                    <p style={styles.achievementTitle}>🥇 {a.title}</p>
-                    <p style={styles.achievementMeta}>
-                      {a.competition} •{" "}
-                      {a.date ? new Date(a.date).toLocaleDateString() : ""}
-                    </p>
+                <div key={a._id} className={styles.achievementCard}>
+                  <div className={styles.achievementLeft}>
+                    <div className={styles.medalIcon}>
+                      <Medal size={22} />
+                    </div>
+                    <div>
+                      <p className={styles.achievementTitle}>{a.title}</p>
+                      <p className={styles.achievementMeta}>
+                        {a.competition} •{" "}
+                        {a.date ? new Date(a.date).toLocaleDateString() : ""}
+                      </p>
+                    </div>
                   </div>
                   {isPrivileged && (
                     <button
                       onClick={() => handleDeleteTeamAchievement(a._id)}
-                      style={styles.deleteBtn}
+                      className={styles.deleteBtn}
                     >
-                      🗑️
+                      <Trash2 size={16} />
                     </button>
                   )}
                 </div>
@@ -193,51 +201,69 @@ function Achievements() {
 
       {activeTab === "personal" && (
         <div>
-          <form onSubmit={handleAddPersonalAchievement} style={styles.form}>
-            <h3 style={styles.formTitle}>Add Personal Achievement</h3>
-            <input
-              type="text"
-              placeholder="Title (e.g. Best Female Athlete — CITIUS 2026)"
-              value={personalForm.title}
-              onChange={(e) =>
-                setPersonalForm({ ...personalForm, title: e.target.value })
-              }
-              style={styles.input}
-              required
-            />
-            <input
-              type="date"
-              value={personalForm.date}
-              onChange={(e) =>
-                setPersonalForm({ ...personalForm, date: e.target.value })
-              }
-              style={styles.input}
-              required
-            />
-            <button type="submit" style={styles.submitBtn}>
-              Add Achievement 🏅
-            </button>
-          </form>
+          <div className={styles.form}>
+            <p className={styles.formTitle}>
+              <Plus size={18} color="#f59e0b" />
+              Add Personal Achievement
+            </p>
+            <form
+              onSubmit={handleAddPersonalAchievement}
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "0.75rem",
+              }}
+            >
+              <input
+                type="text"
+                placeholder="Title (e.g. Best Female Athlete — CITIUS 2026)"
+                value={personalForm.title}
+                onChange={(e) =>
+                  setPersonalForm({ ...personalForm, title: e.target.value })
+                }
+                className={styles.input}
+                required
+              />
+              <input
+                type="date"
+                value={personalForm.date}
+                onChange={(e) =>
+                  setPersonalForm({ ...personalForm, date: e.target.value })
+                }
+                className={styles.input}
+                required
+              />
+              <button type="submit" className={styles.submitBtn}>
+                <Plus size={16} />
+                Add Achievement
+              </button>
+            </form>
+          </div>
 
-          <div style={styles.achievementsList}>
+          <div className={styles.achievementsList}>
             {personalAchievements.length === 0 ? (
-              <p style={styles.empty}>
-                No personal achievements yet — go win some! 🏃‍♀️
+              <p className={styles.empty}>
+                No personal achievements yet — go win some!
               </p>
             ) : (
               personalAchievements.map((a) => (
-                <div key={a._id} style={styles.achievementCard}>
-                  <div>
-                    <p style={styles.achievementTitle}>🏅 {a.title}</p>
-                    <p style={styles.achievementMeta}>
-                      {a.date ? new Date(a.date).toLocaleDateString() : ""}
-                    </p>
+                <div key={a._id} className={styles.achievementCard}>
+                  <div className={styles.achievementLeft}>
+                    <div className={styles.medalIcon}>
+                      <Medal size={22} />
+                    </div>
+                    <div>
+                      <p className={styles.achievementTitle}>{a.title}</p>
+                      <p className={styles.achievementMeta}>
+                        {a.date ? new Date(a.date).toLocaleDateString() : ""}
+                      </p>
+                    </div>
                   </div>
                   <button
                     onClick={() => handleDeletePersonalAchievement(a._id)}
-                    style={styles.deleteBtn}
+                    className={styles.deleteBtn}
                   >
-                    🗑️
+                    <Trash2 size={16} />
                   </button>
                 </div>
               ))
@@ -248,97 +274,5 @@ function Achievements() {
     </div>
   );
 }
-
-const styles = {
-  container: {
-    maxWidth: "700px",
-    margin: "0 auto",
-    padding: "1.5rem 1rem",
-  },
-  heading: {
-    fontSize: "1.5rem",
-    marginBottom: "1.5rem",
-  },
-  tabs: {
-    display: "flex",
-    gap: "0.5rem",
-    marginBottom: "1.5rem",
-  },
-  tab: {
-    padding: "0.5rem 1.25rem",
-    borderRadius: "8px",
-    border: "1px solid #ddd",
-    backgroundColor: "white",
-    cursor: "pointer",
-    fontWeight: "500",
-  },
-  activeTab: {
-    backgroundColor: "#2563eb",
-    color: "white",
-    border: "1px solid #2563eb", // remove borderColor, keep just border
-  },
-  form: {
-    backgroundColor: "white",
-    padding: "1.25rem",
-    borderRadius: "12px",
-    boxShadow: "0 2px 4px rgba(0,0,0,0.05)",
-    marginBottom: "1.5rem",
-    display: "flex",
-    flexDirection: "column",
-    gap: "0.75rem",
-  },
-  formTitle: {
-    fontSize: "1rem",
-    fontWeight: "600",
-  },
-  input: {
-    padding: "0.75rem",
-    borderRadius: "8px",
-    border: "1px solid #ddd",
-    fontSize: "1rem",
-  },
-  submitBtn: {
-    padding: "0.75rem",
-    borderRadius: "8px",
-    border: "none",
-    backgroundColor: "#2563eb",
-    color: "white",
-    fontWeight: "600",
-    cursor: "pointer",
-  },
-  achievementsList: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "0.75rem",
-  },
-  achievementCard: {
-    backgroundColor: "white",
-    padding: "1rem 1.25rem",
-    borderRadius: "12px",
-    boxShadow: "0 2px 4px rgba(0,0,0,0.05)",
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  achievementTitle: {
-    fontWeight: "600",
-    marginBottom: "0.25rem",
-  },
-  achievementMeta: {
-    fontSize: "0.85rem",
-    color: "#666",
-  },
-  deleteBtn: {
-    background: "none",
-    border: "none",
-    cursor: "pointer",
-    fontSize: "1.1rem",
-  },
-  empty: {
-    textAlign: "center",
-    color: "#999",
-    padding: "2rem",
-  },
-};
 
 export default Achievements;
