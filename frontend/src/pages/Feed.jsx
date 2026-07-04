@@ -2,14 +2,14 @@ import { useEffect, useState } from "react";
 import axiosInstance from "../utils/axios";
 import { useAuth } from "../context/AuthContext";
 import PostCard from "../components/PostCard";
+import { Zap, ClipboardList, Send } from "lucide-react";
+import styles from "./Feed.module.css";
 
 function Feed() {
   const { user } = useAuth();
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [postType, setPostType] = useState("post"); //"post" or "log"
-
-  //form states
+  const [postType, setPostType] = useState("post");
   const [content, setContent] = useState("");
   const [logDetails, setLogDetails] = useState({
     date: "",
@@ -31,14 +31,11 @@ function Feed() {
   };
 
   useEffect(() => {
-    console.log("user:", user);
-    console.log("user.team:", user?.team);
     if (user?.team) fetchFeed();
-  }, [user]);
+  }, [user?.team]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
       const payload = {
         type: postType,
@@ -46,10 +43,7 @@ function Feed() {
         isPublic: postType === "post",
         logDetails: postType === "log" ? logDetails : undefined,
       };
-
       await axiosInstance.post("/posts", payload);
-
-      //reset forms
       setContent("");
       setLogDetails({
         date: "",
@@ -58,36 +52,36 @@ function Feed() {
         duration: "",
         personalNote: "",
       });
-
       fetchFeed();
     } catch (err) {
       console.error(err);
     }
   };
 
-  if (loading) return <div style={styles.loading}>Loading feed...</div>;
+  if (loading)
+    return (
+      <div style={{ textAlign: "center", padding: "3rem", color: "#9ca3af" }}>
+        Loading feed...
+      </div>
+    );
 
   return (
-    <div style={styles.container}>
-      <div style={styles.createPost}>
-        <div style={styles.tabs}>
+    <div className={styles.container}>
+      <div className={styles.createPost}>
+        <div className={styles.tabs}>
           <button
             onClick={() => setPostType("post")}
-            style={{
-              ...styles.tab,
-              ...(postType === "post" ? styles.activeTab : {}),
-            }}
+            className={`${styles.tab} ${postType === "post" ? styles.activeTab : ""}`}
           >
-            📝 Quick Post
+            <Zap size={15} />
+            Quick Post
           </button>
           <button
             onClick={() => setPostType("log")}
-            style={{
-              ...styles.tab,
-              ...(postType === "log" ? styles.activeTab : {}),
-            }}
+            className={`${styles.tab} ${postType === "log" ? styles.activeTab : ""}`}
           >
-            🏋️ Training Log
+            <ClipboardList size={15} />
+            Training Log
           </button>
         </div>
 
@@ -97,18 +91,18 @@ function Feed() {
               placeholder="What's happening in practice today?"
               value={content}
               onChange={(e) => setContent(e.target.value)}
-              style={styles.textarea}
+              className={styles.textarea}
               required
             />
           ) : (
-            <div style={styles.logForm}>
+            <div className={styles.logForm}>
               <input
                 type="date"
                 value={logDetails.date}
                 onChange={(e) =>
                   setLogDetails({ ...logDetails, date: e.target.value })
                 }
-                style={styles.input}
+                className={styles.input}
                 required
               />
               <input
@@ -118,7 +112,7 @@ function Feed() {
                 onChange={(e) =>
                   setLogDetails({ ...logDetails, drillName: e.target.value })
                 }
-                style={styles.input}
+                className={styles.input}
                 required
               />
               <input
@@ -128,7 +122,7 @@ function Feed() {
                 onChange={(e) =>
                   setLogDetails({ ...logDetails, duration: e.target.value })
                 }
-                style={styles.input}
+                className={styles.input}
                 required
               />
               <textarea
@@ -137,21 +131,22 @@ function Feed() {
                 onChange={(e) =>
                   setLogDetails({ ...logDetails, personalNote: e.target.value })
                 }
-                style={styles.textarea}
+                className={styles.textarea}
                 required
               />
             </div>
           )}
 
-          <button type="submit" style={styles.submitBtn}>
+          <button type="submit" className={styles.submitBtn}>
+            <Send size={15} />
             {postType === "post" ? "Post" : "Log Training"}
           </button>
         </form>
       </div>
 
-      <div style={styles.feed}>
+      <div className={styles.feed}>
         {posts.length === 0 ? (
-          <p style={styles.empty}>
+          <p className={styles.empty}>
             No posts yet. Be the first to share something!
           </p>
         ) : (
@@ -163,82 +158,5 @@ function Feed() {
     </div>
   );
 }
-
-const styles = {
-  container: {
-    maxWidth: "600px",
-    margin: "0 auto",
-    padding: "1rem",
-  },
-  loading: {
-    textAlign: "center",
-    padding: "2rem",
-  },
-  createPost: {
-    backgroundColor: "white",
-    borderRadius: "12px",
-    padding: "1.25rem",
-    marginBottom: "1.5rem",
-    boxShadow: "0 2px 4px rgba(0,0,0,0.05)",
-  },
-  tabs: {
-    display: "flex",
-    gap: "0.5rem",
-    marginBottom: "1rem",
-  },
-  tab: {
-    padding: "0.5rem 1rem",
-    borderRadius: "8px",
-    border: "1px solid #ddd",
-    backgroundColor: "white",
-    cursor: "pointer",
-  },
-  activeTab: {
-    backgroundColor: "#2563eb",
-    color: "white",
-    borderColor: "#2563eb",
-  },
-  textarea: {
-    width: "100%",
-    minHeight: "80px",
-    padding: "0.75rem",
-    borderRadius: "8px",
-    border: "1px solid #ddd",
-    fontSize: "1rem",
-    fontFamily: "inherit",
-    resize: "vertical",
-    marginBottom: "0.75rem",
-  },
-  logForm: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "0.75rem",
-    marginBottom: "0.75rem",
-  },
-  input: {
-    padding: "0.75rem",
-    borderRadius: "8px",
-    border: "1px solid #ddd",
-    fontSize: "1rem",
-  },
-  submitBtn: {
-    padding: "0.75rem 1.5rem",
-    borderRadius: "8px",
-    border: "none",
-    backgroundColor: "#2563eb",
-    color: "white",
-    cursor: "pointer",
-    fontWeight: "600",
-  },
-  feed: {
-    display: "flex",
-    flexDirection: "column",
-  },
-  empty: {
-    textAlign: "center",
-    color: "#666",
-    padding: "2rem",
-  },
-};
 
 export default Feed;

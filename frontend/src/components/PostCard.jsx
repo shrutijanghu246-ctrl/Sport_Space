@@ -10,7 +10,9 @@ function PostCard({ post, onUpdate }) {
   const [commentText, setCommentText] = useState("");
   const navigate = useNavigate();
 
-  const hasLiked = post.likes?.includes(user?.id);
+  const hasLiked = post.likes?.some(
+    (id) => id.toString() === (user?._id || user?.id)?.toString(),
+  );
   const canDelete =
     user?.id === post.author?._id || ["captain", "admin"].includes(user?.role);
 
@@ -79,16 +81,18 @@ function PostCard({ post, onUpdate }) {
       {post.image && <img src={post.image} alt="post" style={styles.image} />}
 
       <div style={styles.actions}>
-        // Like button:
+        {/* Like button: */}
         <button onClick={handleLike} style={styles.actionBtn}>
           <Heart
             size={16}
-            fill={hasLiked ? "#f59e0b" : "none"}
-            color={hasLiked ? "#f59e0b" : "#6b7280"}
+            fill={hasLiked ? "#ef4444" : "none"}
+            color={hasLiked ? "#ef4444" : "#6b7280"}
           />
-          <span>{post.likes?.length || 0}</span>
+          <span style={{ color: hasLiked ? "#ef4444" : "#6b7280" }}>
+            {post.likes?.length || 0}
+          </span>
         </button>
-        // Comment button:
+        {/* Comment button: */}
         <button
           onClick={() => setShowComments(!showComments)}
           style={styles.actionBtn}
@@ -96,7 +100,7 @@ function PostCard({ post, onUpdate }) {
           <MessageCircle size={16} color="#6b7280" />
           <span>{post.comments?.length || 0}</span>
         </button>
-        // Delete button:
+        {/* Delete button */}
         {canDelete && (
           <button
             onClick={handleDelete}
@@ -136,64 +140,76 @@ function PostCard({ post, onUpdate }) {
 const styles = {
   card: {
     backgroundColor: "white",
-    borderRadius: "12px",
+    borderRadius: "16px",
     padding: "1.25rem",
-    marginBottom: "1rem",
-    boxShadow: "0 2px 4px rgba(0,0,0,0.05)",
+    marginBottom: "0",
+    border: "1px solid #e5e7eb",
+    boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
   },
   header: {
     display: "flex",
     alignItems: "center",
     gap: "0.75rem",
-    marginBottom: "0.75rem",
+    marginBottom: "0.875rem",
+    cursor: "pointer",
   },
   avatar: {
     width: "40px",
     height: "40px",
     borderRadius: "50%",
-    backgroundColor: "#2563eb",
+    backgroundColor: "#0a0f1e",
     color: "white",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    fontWeight: "600",
+    fontWeight: "700",
+    fontSize: "0.875rem",
+    flexShrink: 0,
   },
   authorName: {
     fontWeight: "600",
+    fontSize: "0.95rem",
+    color: "#0a0f1e",
   },
   sportTag: {
     fontSize: "0.8rem",
-    color: "#666",
+    color: "#6b7280",
   },
   content: {
-    marginBottom: "0.75rem",
-    lineHeight: "1.5",
+    marginBottom: "0.875rem",
+    lineHeight: "1.6",
+    color: "#374151",
+    fontSize: "0.95rem",
   },
   logBox: {
-    backgroundColor: "#f0f9ff",
+    backgroundColor: "#fef3c7",
     padding: "1rem",
-    borderRadius: "8px",
-    marginBottom: "0.75rem",
+    borderRadius: "10px",
+    marginBottom: "0.875rem",
+    borderLeft: "3px solid #f59e0b",
   },
   logTitle: {
-    fontWeight: "600",
+    fontWeight: "700",
     marginBottom: "0.5rem",
+    color: "#0a0f1e",
+    fontSize: "0.9rem",
   },
   logMeta: {
     fontSize: "0.8rem",
-    color: "#666",
+    color: "#6b7280",
     marginTop: "0.5rem",
   },
   image: {
     width: "100%",
-    borderRadius: "8px",
-    marginBottom: "0.75rem",
+    borderRadius: "10px",
+    marginBottom: "0.875rem",
   },
   actions: {
     display: "flex",
-    gap: "1rem",
-    borderTop: "1px solid #eee",
-    paddingTop: "0.75rem",
+    gap: "0.75rem",
+    borderTop: "1px solid #f3f4f6",
+    paddingTop: "0.875rem",
+    alignItems: "center",
   },
   actionBtn: {
     background: "none",
@@ -204,34 +220,46 @@ const styles = {
     gap: "0.3rem",
     color: "#6b7280",
     fontSize: "0.85rem",
+    padding: "0.3rem 0.5rem",
+    borderRadius: "6px",
+    transition: "background 0.15s",
   },
   commentsSection: {
-    marginTop: "0.75rem",
-    borderTop: "1px solid #eee",
-    paddingTop: "0.75rem",
+    marginTop: "0.875rem",
+    borderTop: "1px solid #f3f4f6",
+    paddingTop: "0.875rem",
   },
   comment: {
-    fontSize: "0.9rem",
+    fontSize: "0.875rem",
     marginBottom: "0.5rem",
+    color: "#374151",
+    padding: "0.5rem",
+    backgroundColor: "#f9fafb",
+    borderRadius: "8px",
   },
   commentForm: {
     display: "flex",
     gap: "0.5rem",
-    marginTop: "0.5rem",
+    marginTop: "0.75rem",
   },
   commentInput: {
     flex: 1,
-    padding: "0.5rem",
-    borderRadius: "6px",
-    border: "1px solid #ddd",
+    padding: "0.5rem 0.75rem",
+    borderRadius: "8px",
+    border: "1.5px solid #e5e7eb",
+    fontSize: "0.875rem",
+    outline: "none",
+    fontFamily: "Inter, sans-serif",
   },
   commentBtn: {
     padding: "0.5rem 1rem",
-    borderRadius: "6px",
+    borderRadius: "8px",
     border: "none",
-    backgroundColor: "#2563eb",
+    backgroundColor: "#0a0f1e",
     color: "white",
     cursor: "pointer",
+    fontSize: "0.875rem",
+    fontWeight: "600",
   },
 };
 
