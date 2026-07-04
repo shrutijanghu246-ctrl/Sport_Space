@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import axiosInstance from "../utils/axios";
 import { useSocket } from "../context/SocketContext";
 import { useNavigate } from "react-router-dom";
+import { Bell } from "lucide-react";
 
 function NotificationBell() {
   const [notifications, setNotifications] = useState([]);
@@ -64,7 +65,7 @@ function NotificationBell() {
         onClick={() => setShowDropdown(!showDropdown)}
         style={styles.bellBtn}
       >
-        🔔
+        <Bell size={20} color="#9ca3af" />
         {unreadCount > 0 && <span style={styles.badge}>{unreadCount}</span>}
       </button>
 

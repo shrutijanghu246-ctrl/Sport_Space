@@ -2,6 +2,7 @@ import { useState } from "react";
 import axiosInstance from "../utils/axios";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { Heart, MessageCircle, Trash2 } from "lucide-react";
 
 function PostCard({ post, onUpdate }) {
   const { user } = useAuth();
@@ -78,21 +79,30 @@ function PostCard({ post, onUpdate }) {
       {post.image && <img src={post.image} alt="post" style={styles.image} />}
 
       <div style={styles.actions}>
+        // Like button:
         <button onClick={handleLike} style={styles.actionBtn}>
-          {hasLiked ? "❤️" : "🤍"} {post.likes?.length || 0}
+          <Heart
+            size={16}
+            fill={hasLiked ? "#f59e0b" : "none"}
+            color={hasLiked ? "#f59e0b" : "#6b7280"}
+          />
+          <span>{post.likes?.length || 0}</span>
         </button>
+        // Comment button:
         <button
           onClick={() => setShowComments(!showComments)}
           style={styles.actionBtn}
         >
-          💬 {post.comments?.length || 0}
+          <MessageCircle size={16} color="#6b7280" />
+          <span>{post.comments?.length || 0}</span>
         </button>
+        // Delete button:
         {canDelete && (
           <button
             onClick={handleDelete}
-            style={{ ...styles.actionBtn, color: "red" }}
+            style={{ ...styles.actionBtn, color: "#ef4444" }}
           >
-            🗑️ Delete
+            <Trash2 size={16} />
           </button>
         )}
       </div>
@@ -189,7 +199,11 @@ const styles = {
     background: "none",
     border: "none",
     cursor: "pointer",
-    fontSize: "0.9rem",
+    display: "flex",
+    alignItems: "center",
+    gap: "0.3rem",
+    color: "#6b7280",
+    fontSize: "0.85rem",
   },
   commentsSection: {
     marginTop: "0.75rem",

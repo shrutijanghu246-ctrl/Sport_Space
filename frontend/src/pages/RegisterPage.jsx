@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import axiosInstance from "../utils/axios";
+import { Zap } from "lucide-react";
 
 function RegisterPage() {
   const [formData, setFormData] = useState({
@@ -38,7 +39,10 @@ function RegisterPage() {
   return (
     <div style={styles.container}>
       <div style={styles.card}>
-        <h1 style={styles.logo}>🏅 SportSpace</h1>
+        <div style={styles.logo}>
+          <Zap size={28} fill="#f59e0b" color="#f59e0b" />
+          <span>SportSpace</span>
+        </div>
         <h2 style={styles.title}>Create Account</h2>
         <p style={styles.subtitle}>Join your college sports platform</p>
 

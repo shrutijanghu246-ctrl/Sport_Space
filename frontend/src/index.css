@@ -6,13 +6,29 @@
 
 body {
   font-family: "Inter", sans-serif;
-  background-color: #f8fafc;
-  color: #0f172a;
+  background-color: #f9fafb;
+  color: #0a0f1e;
   line-height: 1.5;
 }
 
+:root {
+  --primary: #0a0f1e;
+  --primary-dark: #111827;
+  --accent: #f59e0b;
+  --accent-light: #fef3c7;
+  --bg: #f9fafb;
+  --card: #ffffff;
+  --text-primary: #0a0f1e;
+  --text-secondary: #374151;
+  --border: #e5e7eb;
+  --radius: 12px;
+  --radius-sm: 8px;
+  --shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
 a {
-  color: #2563eb;
+  color: var(--accent);
   text-decoration: none;
 }
 
@@ -39,6 +55,6 @@ select {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: #d1d5db;
   border-radius: 3px;
 }

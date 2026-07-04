@@ -7,6 +7,7 @@ import {
   MessageCircle,
   Salad,
   Dumbbell,
+  Medal,
 } from "lucide-react";
 import styles from "./Dashboard.module.css";
 
@@ -57,12 +58,14 @@ function Dashboard() {
     <div className={styles.container}>
       <div className={styles.welcomeCard}>
         <div className={styles.welcomeText}>
-          <h2>Welcome back, {user?.name?.split(" ")[0]}! 👋</h2>
+          <h2>Welcome back, {user?.name?.split(" ")[0]}!</h2>
           <p>
             {user?.role} • {user?.sport} • NIT Kurukshetra
           </p>
         </div>
-        <span className={styles.welcomeEmoji}>🏅</span>
+        <div className={styles.medalIcon}>
+          <Medal size={64} color="#f59e0b" strokeWidth={1.5} />
+        </div>
       </div>
 
       <p className={styles.sectionTitle}>Quick Access</p>

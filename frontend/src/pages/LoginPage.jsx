@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import axiosInstance from "../utils/axios";
 import { useAuth } from "../context/AuthContext";
+import { Medal, Zap } from "lucide-react";
 
 function LoginPage() {
   const [formData, setFormData] = useState({
@@ -44,7 +45,20 @@ function LoginPage() {
   return (
     <div style={styles.container}>
       <div style={styles.card}>
-        <h1 style={styles.logo}>🏅 SportSpace</h1>
+        {/* Amber accent bar at top */}
+        <div
+          style={{
+            height: "4px",
+            backgroundColor: "#f59e0b",
+            borderRadius: "4px 4px 0 0",
+            margin: "-2.5rem -2.5rem 2rem -2.5rem",
+          }}
+        />
+
+        <div style={styles.logo}>
+          <Zap size={28} fill="#f59e0b" color="#f59e0b" />
+          SportSpace
+        </div>
         <h2 style={styles.title}>Welcome back</h2>
         <p style={styles.subtitle}>Login to your team's space</p>
 
@@ -54,7 +68,7 @@ function LoginPage() {
           <input
             type="email"
             name="email"
-            placeholder="Email"
+            placeholder="Email address"
             value={formData.email}
             onChange={handleChange}
             style={styles.input}
@@ -70,12 +84,15 @@ function LoginPage() {
             required
           />
           <button type="submit" style={styles.button} disabled={loading}>
-            {loading ? "Logging in..." : "Login"}
+            {loading ? "Logging in..." : "Login →"}
           </button>
         </form>
 
         <p style={styles.link}>
-          Don't have an account? <Link to="/register">Register here</Link>
+          Don't have an account?{" "}
+          <Link to="/register" style={{ color: "#f59e0b", fontWeight: "600" }}>
+            Register here
+          </Link>
         </p>
       </div>
     </div>
@@ -88,36 +105,51 @@ const styles = {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#f0f2f5",
+    backgroundColor: "#f9fafb",
   },
   card: {
     backgroundColor: "white",
-    padding: "2rem",
-    borderRadius: "12px",
-    boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
+    padding: "2.5rem",
+    borderRadius: "16px",
+    boxShadow: "0 4px 24px rgba(0,0,0,0.08)",
     width: "100%",
-    maxWidth: "400px",
+    maxWidth: "420px",
+    border: "1px solid #e5e7eb",
   },
   logo: {
-    textAlign: "center",
-    fontSize: "2rem",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: "0.5rem",
+    fontSize: "1.4rem",
+    fontWeight: "800",
+    color: "#0a0f1e",
     marginBottom: "0.5rem",
+    letterSpacing: "-0.5px",
   },
   title: {
     textAlign: "center",
-    fontSize: "1.5rem",
+    fontSize: "1.4rem",
+    fontWeight: "700",
+    color: "#0a0f1e",
     marginBottom: "0.25rem",
+    letterSpacing: "-0.3px",
   },
   subtitle: {
     textAlign: "center",
-    color: "#666",
-    marginBottom: "1.5rem",
+    color: "#6b7280",
+    marginBottom: "2rem",
+    fontSize: "0.9rem",
   },
   error: {
-    color: "red",
+    color: "#ef4444",
     textAlign: "center",
     marginBottom: "1rem",
-    fontSize: "0.9rem",
+    fontSize: "0.875rem",
+    backgroundColor: "#fef2f2",
+    padding: "0.75rem",
+    borderRadius: "8px",
+    border: "1px solid #fecaca",
   },
   form: {
     display: "flex",
@@ -126,26 +158,44 @@ const styles = {
   },
   input: {
     padding: "0.75rem 1rem",
-    borderRadius: "8px",
-    border: "1px solid #ddd",
-    fontSize: "1rem",
+    borderRadius: "10px",
+    border: "1.5px solid #e5e7eb",
+    fontSize: "0.95rem",
     outline: "none",
+    transition: "border-color 0.15s",
+    width: "100%",
   },
   button: {
-    padding: "0.75rem",
-    borderRadius: "8px",
+    padding: "0.85rem",
+    borderRadius: "10px",
     border: "none",
-    backgroundColor: "#2563eb",
+    backgroundColor: "#0a0f1e",
     color: "white",
-    fontSize: "1rem",
+    fontSize: "0.95rem",
     cursor: "pointer",
-    fontWeight: "600",
+    fontWeight: "700",
+    letterSpacing: "0.3px",
+    transition: "background 0.15s",
+    marginTop: "0.25rem",
   },
   link: {
     textAlign: "center",
-    marginTop: "1rem",
-    fontSize: "0.9rem",
-    color: "#666",
+    marginTop: "1.25rem",
+    fontSize: "0.875rem",
+    color: "#6b7280",
+  },
+  divider: {
+    display: "flex",
+    alignItems: "center",
+    gap: "1rem",
+    margin: "1rem 0",
+    color: "#9ca3af",
+    fontSize: "0.8rem",
+  },
+  dividerLine: {
+    flex: 1,
+    height: "1px",
+    backgroundColor: "#e5e7eb",
   },
 };
 
