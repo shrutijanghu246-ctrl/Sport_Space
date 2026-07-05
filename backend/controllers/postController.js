@@ -47,6 +47,7 @@ const createPost = async (req, res) => {
 
     res.status(201).json({ message: "Post created successfully", post });
   } catch (err) {
+    console.error("❌ CREATE POST ERROR:", err.message, err.stack);
     res.status(500).json({ message: "Server error", error: err.message });
   }
 };
@@ -54,13 +55,16 @@ const createPost = async (req, res) => {
 //get team feed (members only - shows both posts and logs)
 const getTeamFeed = async (req, res) => {
   try {
+    console.log("📋 Fetching team feed for teamId:", req.params.teamId);
     const posts = await Post.find({ team: req.params.teamId })
       .populate("author", "name profilePic sport")
       .populate("comments.author", "name profilePic")
       .sort({ createdAt: -1 }); //newest first
 
+    console.log("✅ Team feed fetched:", posts.length, "posts");
     res.status(200).json({ posts });
   } catch (err) {
+    console.error("❌ GET TEAM FEED ERROR:", err.message, err.stack);
     res.status(500).json({ message: "Server error", error: err.message });
   }
 };
@@ -68,13 +72,16 @@ const getTeamFeed = async (req, res) => {
 //get public feed(no login needed - only public posts, no logs)
 const getPublicFeed = async (req, res) => {
   try {
+    console.log("📋 Fetching public feed");
     const posts = await Post.find({ isPublic: true, type: "post" })
       .populate("author", "name sport profilePic")
       .sort({ createdAt: -1 })
       .limit(20); //only latest 20 shows
 
+    console.log("✅ Public feed fetched:", posts.length, "posts");
     res.status(200).json({ posts });
   } catch (err) {
+    console.error("❌ GET PUBLIC FEED ERROR:", err.message, err.stack);
     res.status(500).json({ message: "Server error", error: err.message });
   }
 };
@@ -105,6 +112,7 @@ const toggleLike = async (req, res) => {
       likes: post.likes.length,
     });
   } catch (err) {
+    console.error("❌ TOGGLE LIKE ERROR:", err.message, err.stack);
     res.status(500).json({ message: "Server error", error: err.message });
   }
 };
@@ -129,11 +137,12 @@ const addComment = async (req, res) => {
 
     res.status(201).json({ message: "Comment added", comments: post.comments });
   } catch (err) {
+    console.error("❌ ADD COMMENT ERROR:", err.message, err.stack);
     res.status(500).json({ message: "Server error", error: err.message });
   }
 };
 
-//delete post (only author r=or captain/admin){
+//delete post (only author or captain/admin)
 const deletePost = async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
@@ -154,6 +163,7 @@ const deletePost = async (req, res) => {
     await post.deleteOne();
     res.status(200).json({ message: "Post deleted successfully" });
   } catch (err) {
+    console.error("❌ DELETE POST ERROR:", err.message, err.stack);
     res.status(500).json({ message: "Server error", error: err.message });
   }
 };
