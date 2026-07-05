@@ -4,11 +4,20 @@
   box-sizing: border-box;
 }
 
+html,
+body {
+  background-color: #f9fafb;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+
 body {
   font-family: "Inter", sans-serif;
   background-color: #f9fafb;
   color: #0a0f1e;
   line-height: 1.5;
+  min-height: 100vh;
 }
 
 :root {
