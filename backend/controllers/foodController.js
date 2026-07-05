@@ -1,16 +1,24 @@
 const Food = require("../models/Food");
 
-//serach foods
+//search foods
 const searchFoods = async (req, res) => {
   try {
     const { query } = req.query;
 
+    if (!query || query.trim().length < 1) {
+      console.log("❌ Empty search query");
+      return res.status(400).json({ message: "Query is required", foods: [] });
+    }
+
+    console.log("🔍 Searching foods for:", query);
     const foods = await Food.find({
       name: { $regex: query, $options: "i" }, //case insensitive search
     }).limit(10);
 
+    console.log("✅ Found", foods.length, "foods for query:", query);
     res.status(200).json({ foods });
   } catch (err) {
+    console.error("❌ SEARCH FOODS ERROR:", err.message, err.stack);
     res.status(500).json({ message: "Server error", error: err.message });
   }
 };
@@ -18,9 +26,12 @@ const searchFoods = async (req, res) => {
 //get all foods
 const getAllFoods = async (req, res) => {
   try {
+    console.log("📋 Fetching all foods");
     const foods = (await Food.find()).sort({ name: 1 });
-    res.status(200).json({ food });
+    console.log("✅ Found", foods.length, "foods");
+    res.status(200).json({ foods });
   } catch (err) {
+    console.error("❌ GET ALL FOODS ERROR:", err.message, err.stack);
     res.status(500).json({ message: "Server error", error: err.message });
   }
 };
@@ -48,8 +59,10 @@ const addFood = async (req, res) => {
       description,
     });
 
+    console.log("✅ Food added:", food.name);
     res.status(201).json({ message: "Food added!", food });
   } catch (err) {
+    console.error("❌ ADD FOOD ERROR:", err.message, err.stack);
     res.status(500).json({ message: "Server error", error: err.message });
   }
 };
