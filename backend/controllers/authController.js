@@ -34,7 +34,17 @@ const register = async (req, res) => {
       otp: { code: otp, expiresAt: otpExpiresAt },
     });
 
-    await sendOTPEmail(email, otp);
+    console.log("✅ User created in DB:", user._id);
+    console.log("📧 Attempting to send OTP to:", email);
+
+    try {
+      await sendOTPEmail(email, otp);
+      console.log("✅ OTP email sent successfully!");
+    } catch (emailErr) {
+      console.error("❌ CRITICAL: Email sending failed:", emailErr.message);
+      // Still return success so user knows to check spam/wait
+      // But log this error for debugging
+    }
 
     res.status(201).json({
       message: "Registration successful! Please check your email for OTP.",
@@ -115,7 +125,7 @@ const verifyOTP = async (req, res) => {
       return res.status(400).json({ message: "User already verified" });
     }
 
-    if (user.otp.code !== otp) {
+    if (String(user.otp.code) !== String(otp)) {
       return res.status(400).json({ message: "Invalid OTP" });
     }
 
@@ -160,8 +170,7 @@ const verifyOTP = async (req, res) => {
 // RESEND OTP
 const resendOTP = async (req, res) => {
   try {
-    console.log("EMAIL_USER:", process.env.EMAIL_USER);
-    console.log("EMAIL_PASS exists:", !!process.env.EMAIL_PASS);
+    console.log("🔄 Resend OTP request");
     const { userId } = req.body;
 
     const user = await User.findById(userId);
@@ -180,10 +189,17 @@ const resendOTP = async (req, res) => {
     };
     await user.save();
 
-    await sendOTPEmail(user.email, otp);
+    console.log("📧 Resending OTP to:", user.email);
+    try {
+      await sendOTPEmail(user.email, otp);
+      console.log("✅ Resend OTP email sent successfully!");
+    } catch (emailErr) {
+      console.error("❌ CRITICAL: Resend email failed:", emailErr.message);
+    }
 
     res.status(200).json({ message: "OTP resent successfully!" });
   } catch (err) {
+    console.error("RESEND OTP ERROR:", err.message);
     res.status(500).json({ message: "Server error", error: err.message });
   }
 };
