@@ -11,7 +11,7 @@ export const SocketProvider = ({ children }) => {
   useEffect(() => {
     if (!user) return;
 
-    const newSocket = io("http://localhost:8080");
+    const newSocket = io("https://sport-space.onrender.com");
     setSocket(newSocket);
 
     newSocket.on("connect", () => {

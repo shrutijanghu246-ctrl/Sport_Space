@@ -1,8 +1,8 @@
 import axios from "axios";
 
-const axioInstance = axios.create({
-  baseURL: "http://localhost:8080/api",
-  withCredentials: true, //send cookies with every request automatically
+const axiosInstance = axios.create({
+  baseURL: "https://sport-space.onrender.com/api",
+  withCredentials: true,
 });
 
-export default axioInstance;
+export default axiosInstance;
