@@ -23,6 +23,40 @@ const createTeam = async (req, res) => {
   }
 };
 
+//CREATE TEAM AND AUTOMATICALLY ADD CAPTAIN
+const createTeamAndJoin = async (req, res) => {
+  try {
+    const { name, sport, description } = req.body;
+
+    const existingTeam = await Team.findOne({ name });
+    if (existingTeam) {
+      return res.status(400).json({ message: "Team already exists" });
+    }
+
+    const team = await Team.create({
+      name,
+      sport,
+      description,
+      members: [req.user._id], // Add captain as member
+    });
+
+    // Update user's team field
+    await User.findByIdAndUpdate(req.user._id, { team: team._id });
+
+    console.log("✅ Team created and captain joined:", team.name);
+    res.status(201).json({
+      message: "Team created successfully and you joined!",
+      team,
+    });
+  } catch (err) {
+    console.error("❌ CREATE TEAM AND JOIN ERROR:", err.message, err.stack);
+    res.status(500).json({
+      message: "Server error",
+      error: err.message,
+    });
+  }
+};
+
 //GET ALL TEAMS(public)
 const getAllTeams = async (req, res) => {
   try {
@@ -159,6 +193,7 @@ const deleteAchievement = async (req, res) => {
 
 module.exports = {
   createTeam,
+  createTeamAndJoin,
   getAllTeams,
   getTeam,
   addMember,
