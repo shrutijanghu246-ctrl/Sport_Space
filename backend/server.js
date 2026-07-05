@@ -108,6 +108,15 @@ app.use("/api/exercises", exerciseRoutes);
 const foodRoutes = require("./routes/foodRoutes");
 app.use("/api/foods", foodRoutes);
 
+app.get("/debug", (req, res) => {
+  res.json({
+    emailUser: process.env.EMAIL_USER ? "set" : "not set",
+    emailPass: process.env.EMAIL_PASS ? "set" : "not set",
+    jwtSecret: process.env.JWT_SECRET ? "set" : "not set",
+    mongoUri: process.env.MONGODB_URI ? "set" : "not set",
+  });
+});
+
 const PORT = process.env.PORT || 8080;
 server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
