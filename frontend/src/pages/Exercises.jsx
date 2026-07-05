@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import axiosInstance from "../utils/axios";
 import { useAuth } from "../context/AuthContext";
+import { Dumbbell, Plus, Trash2, Search, X } from "lucide-react";
+import styles from "./Exercises.module.css";
 
 function Exercises() {
   const { user } = useAuth();
@@ -35,9 +37,8 @@ function Exercises() {
     fetchExercises();
   }, [filterSport]);
 
-  const handleChange = (e) => {
+  const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -79,44 +80,71 @@ function Exercises() {
   };
 
   const difficultyColor = {
-    beginner: "#22c55e",
-    intermediate: "#f59e0b",
-    advanced: "#ef4444",
+    beginner: { bg: "#f0fdf4", color: "#16a34a" },
+    intermediate: { bg: "#fef3c7", color: "#d97706" },
+    advanced: { bg: "#fef2f2", color: "#ef4444" },
   };
 
   return (
-    <div style={styles.container}>
-      <div style={styles.headerRow}>
-        <h2 style={styles.heading}>💪 Exercise Recommendations</h2>
+    <div className={styles.container}>
+      <div className={styles.headerRow}>
+        <h2 className={styles.heading}>
+          <Dumbbell size={24} color="#f59e0b" />
+          Exercise Recommendations
+        </h2>
         {isPrivileged && (
-          <button onClick={() => setShowForm(!showForm)} style={styles.addBtn}>
-            {showForm ? "Cancel" : "+ Add Exercise"}
+          <button
+            onClick={() => setShowForm(!showForm)}
+            className={`${styles.addBtn} ${showForm ? styles.cancelBtn : ""}`}
+          >
+            {showForm ? (
+              <>
+                <X size={16} /> Cancel
+              </>
+            ) : (
+              <>
+                <Plus size={16} /> Add Exercise
+              </>
+            )}
           </button>
         )}
       </div>
 
-      {/* Filter */}
-      <div style={styles.filterRow}>
-        <input
-          type="text"
-          placeholder="Filter by sport (e.g. Athletics)"
-          value={filterSport}
-          onChange={(e) => setFilterSport(e.target.value)}
-          style={styles.filterInput}
-        />
+      <div className={styles.filterRow}>
+        <div style={{ position: "relative" }}>
+          <Search
+            size={16}
+            style={{
+              position: "absolute",
+              left: "0.875rem",
+              top: "50%",
+              transform: "translateY(-50%)",
+              color: "#9ca3af",
+            }}
+          />
+          <input
+            type="text"
+            placeholder="Filter by sport..."
+            value={filterSport}
+            onChange={(e) => setFilterSport(e.target.value)}
+            className={styles.filterInput}
+            style={{ paddingLeft: "2.5rem" }}
+          />
+        </div>
       </div>
 
-      {/* Add Form */}
       {showForm && isPrivileged && (
-        <div style={styles.formCard}>
-          <h3 style={styles.formTitle}>Add Exercise</h3>
-          <form onSubmit={handleSubmit} style={styles.form}>
+        <div className={styles.formCard}>
+          <p className={styles.formTitle}>
+            <Plus size={18} color="#f59e0b" /> Add Exercise
+          </p>
+          <form onSubmit={handleSubmit} className={styles.form}>
             <input
               name="name"
               placeholder="Exercise name (e.g. Box Jumps)"
               value={form.name}
               onChange={handleChange}
-              style={styles.input}
+              className={styles.input}
               required
             />
             <input
@@ -124,35 +152,36 @@ function Exercises() {
               placeholder="Sport (e.g. Athletics)"
               value={form.sport}
               onChange={handleChange}
-              style={styles.input}
+              className={styles.input}
               required
             />
             <textarea
               name="description"
-              placeholder="Description — why this exercise helps, theory behind it"
+              placeholder="Description — why this exercise helps"
               value={form.description}
               onChange={handleChange}
-              style={{ ...styles.input, minHeight: "80px" }}
+              className={styles.input}
+              style={{ minHeight: "80px" }}
               required
             />
             <select
               name="difficulty"
               value={form.difficulty}
               onChange={handleChange}
-              style={styles.input}
+              className={styles.input}
             >
               <option value="beginner">Beginner</option>
               <option value="intermediate">Intermediate</option>
               <option value="advanced">Advanced</option>
             </select>
-            <div style={styles.row}>
+            <div className={styles.row}>
               <input
                 name="sets"
                 type="number"
                 placeholder="Sets"
                 value={form.sets}
                 onChange={handleChange}
-                style={{ ...styles.input, flex: 1 }}
+                className={styles.input}
               />
               <input
                 name="reps"
@@ -160,7 +189,7 @@ function Exercises() {
                 placeholder="Reps"
                 value={form.reps}
                 onChange={handleChange}
-                style={{ ...styles.input, flex: 1 }}
+                className={styles.input}
               />
               <input
                 name="duration"
@@ -168,50 +197,51 @@ function Exercises() {
                 placeholder="Duration (mins)"
                 value={form.duration}
                 onChange={handleChange}
-                style={{ ...styles.input, flex: 1 }}
+                className={styles.input}
               />
             </div>
             <input
               name="musclesTargeted"
-              placeholder="Muscles targeted (comma separated: hamstrings, core)"
+              placeholder="Muscles targeted (comma separated)"
               value={form.musclesTargeted}
               onChange={handleChange}
-              style={styles.input}
+              className={styles.input}
             />
             <textarea
               name="tips"
               placeholder="Coaching tips / form notes"
               value={form.tips}
               onChange={handleChange}
-              style={{ ...styles.input, minHeight: "60px" }}
+              className={styles.input}
+              style={{ minHeight: "60px" }}
             />
-            <button type="submit" style={styles.submitBtn}>
-              Add Exercise 💪
+            <button type="submit" className={styles.submitBtn}>
+              <Plus size={16} /> Add Exercise
             </button>
           </form>
         </div>
       )}
 
-      {/* Exercise List */}
-      <div style={styles.exerciseList}>
+      <div className={styles.exerciseList}>
         {exercises.length === 0 ? (
-          <p style={styles.empty}>
-            No exercises yet —{" "}
-            {isPrivileged ? "add some for your team!" : "check back later!"}
+          <p className={styles.empty}>
+            {isPrivileged
+              ? "No exercises yet — add some for your team!"
+              : "No exercises yet — check back later!"}
           </p>
         ) : (
           exercises.map((ex) => (
-            <div key={ex._id} style={styles.exerciseCard}>
-              <div style={styles.cardHeader}>
+            <div key={ex._id} className={styles.exerciseCard}>
+              <div className={styles.cardHeader}>
                 <div>
-                  <h3 style={styles.exerciseName}>{ex.name}</h3>
-                  <div style={styles.tags}>
-                    <span style={styles.sportTag}>🏃 {ex.sport}</span>
+                  <h3 className={styles.exerciseName}>{ex.name}</h3>
+                  <div className={styles.tags}>
+                    <span className={styles.sportTag}>{ex.sport}</span>
                     <span
+                      className={styles.difficultyTag}
                       style={{
-                        ...styles.difficultyTag,
-                        backgroundColor: difficultyColor[ex.difficulty] + "20",
-                        color: difficultyColor[ex.difficulty],
+                        backgroundColor: difficultyColor[ex.difficulty]?.bg,
+                        color: difficultyColor[ex.difficulty]?.color,
                       }}
                     >
                       {ex.difficulty}
@@ -221,42 +251,42 @@ function Exercises() {
                 {isPrivileged && (
                   <button
                     onClick={() => handleDelete(ex._id)}
-                    style={styles.deleteBtn}
+                    className={styles.deleteBtn}
                   >
-                    🗑️
+                    <Trash2 size={16} />
                   </button>
                 )}
               </div>
 
-              <p style={styles.description}>{ex.description}</p>
+              <p className={styles.description}>{ex.description}</p>
 
               {(ex.sets || ex.reps || ex.duration) && (
-                <div style={styles.statsRow}>
+                <div className={styles.statsRow}>
                   {ex.sets && (
-                    <span style={styles.stat}>📊 {ex.sets} sets</span>
+                    <span className={styles.stat}>{ex.sets} sets</span>
                   )}
                   {ex.reps && (
-                    <span style={styles.stat}>🔁 {ex.reps} reps</span>
+                    <span className={styles.stat}>{ex.reps} reps</span>
                   )}
                   {ex.duration && (
-                    <span style={styles.stat}>⏱ {ex.duration} mins</span>
+                    <span className={styles.stat}>{ex.duration} mins</span>
                   )}
                 </div>
               )}
 
               {ex.musclesTargeted?.length > 0 && (
-                <div style={styles.muscles}>
-                  💪 <strong>Targets:</strong> {ex.musclesTargeted.join(", ")}
-                </div>
+                <p className={styles.muscles}>
+                  <strong>Targets:</strong> {ex.musclesTargeted.join(", ")}
+                </p>
               )}
 
               {ex.tips && (
-                <div style={styles.tips}>
-                  💡 <strong>Coach tip:</strong> {ex.tips}
-                </div>
+                <p className={styles.tips}>
+                  <strong>Coach tip:</strong> {ex.tips}
+                </p>
               )}
 
-              <p style={styles.addedBy}>
+              <p className={styles.addedBy}>
                 Added by {ex.addedBy?.name} ({ex.addedBy?.role})
               </p>
             </div>
@@ -266,161 +296,5 @@ function Exercises() {
     </div>
   );
 }
-
-const styles = {
-  container: {
-    maxWidth: "800px",
-    margin: "0 auto",
-    padding: "1.5rem 1rem",
-  },
-  headerRow: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: "1rem",
-  },
-  heading: {
-    fontSize: "1.5rem",
-  },
-  addBtn: {
-    padding: "0.6rem 1.25rem",
-    borderRadius: "8px",
-    border: "none",
-    backgroundColor: "#2563eb",
-    color: "white",
-    cursor: "pointer",
-    fontWeight: "600",
-  },
-  filterRow: {
-    marginBottom: "1.5rem",
-  },
-  filterInput: {
-    padding: "0.6rem 1rem",
-    borderRadius: "8px",
-    border: "1px solid #ddd",
-    width: "100%",
-    fontSize: "0.95rem",
-  },
-  formCard: {
-    backgroundColor: "white",
-    borderRadius: "12px",
-    padding: "1.5rem",
-    boxShadow: "0 2px 4px rgba(0,0,0,0.05)",
-    marginBottom: "1.5rem",
-  },
-  formTitle: {
-    marginBottom: "1rem",
-    fontWeight: "600",
-  },
-  form: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "0.75rem",
-  },
-  input: {
-    padding: "0.65rem 0.75rem",
-    borderRadius: "8px",
-    border: "1px solid #ddd",
-    fontSize: "0.95rem",
-    width: "100%",
-    fontFamily: "inherit",
-  },
-  row: {
-    display: "flex",
-    gap: "0.75rem",
-  },
-  submitBtn: {
-    padding: "0.75rem",
-    borderRadius: "8px",
-    border: "none",
-    backgroundColor: "#2563eb",
-    color: "white",
-    fontWeight: "600",
-    cursor: "pointer",
-  },
-  exerciseList: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "1rem",
-  },
-  exerciseCard: {
-    backgroundColor: "white",
-    borderRadius: "12px",
-    padding: "1.25rem",
-    boxShadow: "0 2px 4px rgba(0,0,0,0.05)",
-  },
-  cardHeader: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
-    marginBottom: "0.75rem",
-  },
-  exerciseName: {
-    fontSize: "1.1rem",
-    fontWeight: "600",
-    marginBottom: "0.4rem",
-  },
-  tags: {
-    display: "flex",
-    gap: "0.5rem",
-  },
-  sportTag: {
-    fontSize: "0.8rem",
-    backgroundColor: "#eff6ff",
-    color: "#2563eb",
-    padding: "0.2rem 0.6rem",
-    borderRadius: "20px",
-  },
-  difficultyTag: {
-    fontSize: "0.8rem",
-    padding: "0.2rem 0.6rem",
-    borderRadius: "20px",
-    textTransform: "capitalize",
-  },
-  deleteBtn: {
-    background: "none",
-    border: "none",
-    cursor: "pointer",
-    fontSize: "1.1rem",
-  },
-  description: {
-    color: "#444",
-    fontSize: "0.95rem",
-    lineHeight: "1.5",
-    marginBottom: "0.75rem",
-  },
-  statsRow: {
-    display: "flex",
-    gap: "1rem",
-    marginBottom: "0.5rem",
-  },
-  stat: {
-    fontSize: "0.9rem",
-    color: "#555",
-  },
-  muscles: {
-    fontSize: "0.9rem",
-    color: "#555",
-    marginBottom: "0.5rem",
-  },
-  tips: {
-    fontSize: "0.9rem",
-    color: "#555",
-    backgroundColor: "#fffbeb",
-    padding: "0.5rem 0.75rem",
-    borderRadius: "8px",
-    marginBottom: "0.5rem",
-  },
-  addedBy: {
-    fontSize: "0.8rem",
-    color: "#999",
-    marginTop: "0.5rem",
-  },
-  empty: {
-    textAlign: "center",
-    color: "#999",
-    padding: "2rem",
-  },
-};
 
 export default Exercises;
