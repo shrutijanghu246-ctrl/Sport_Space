@@ -8,10 +8,17 @@ const {
   removeMember,
   addAchievement,
   deleteAchievement,
+  createTeamAndJoin,
 } = require("../controllers/teamController");
 const { isLoggedIn, authorizeRoles } = require("../middleware/authMiddleware");
 
 router.post("/", isLoggedIn, authorizeRoles("admin", "captain"), createTeam);
+router.post(
+  "/create-and-join",
+  isLoggedIn,
+  authorizeRoles("admin", "captain"),
+  createTeamAndJoin,
+); //captain creates team and joins automatically
 router.get("/", getAllTeams); //public
 router.get("/:id", getTeam); //public
 router.post(
