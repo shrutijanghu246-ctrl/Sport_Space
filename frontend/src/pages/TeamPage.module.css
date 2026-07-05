@@ -1,0 +1,212 @@
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.teamHeader {
+  background: linear-gradient(135deg, #0a0f1e 0%, #1f2937 100%);
+  border-radius: 16px;
+  padding: 2rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  color: white;
+}
+
+.teamAvatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 16px;
+  background-color: #fef3c7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  flex-shrink: 0;
+  color: #f59e0b;
+}
+
+.teamName {
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  margin-bottom: 0.25rem;
+}
+
+.teamSport {
+  color: #f59e0b;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+  font-size: 0.95rem;
+}
+
+.teamDesc {
+  color: #9ca3af;
+  font-size: 0.875rem;
+}
+
+.section {
+  background: white;
+  border-radius: 16px;
+  padding: 1.5rem;
+  border: 1px solid #e5e7eb;
+  margin-bottom: 1rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+.sectionTitle {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.leadershipRow {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.leaderCard {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.875rem 1rem;
+  background: #f9fafb;
+  border-radius: 12px;
+  cursor: pointer;
+  flex: 1;
+  min-width: 180px;
+  border: 1px solid #e5e7eb;
+  transition: all 0.15s;
+}
+
+.leaderCard:hover {
+  border-color: #f59e0b;
+  background: #fef3c7;
+}
+
+.leaderAvatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background-color: #0a0f1e;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.coachAvatar {
+  background-color: #16a34a;
+}
+
+.leaderName {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #0a0f1e;
+}
+
+.leaderRole {
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+.memberGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 0.75rem;
+}
+
+.memberCard {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.875rem;
+  background: #f9fafb;
+  border-radius: 12px;
+  cursor: pointer;
+  border: 1px solid #e5e7eb;
+  transition: all 0.15s;
+}
+
+.memberCard:hover {
+  border-color: #f59e0b;
+  background: #fef3c7;
+}
+
+.memberAvatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #0a0f1e;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.875rem;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.memberAvatarImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.memberName {
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: #0a0f1e;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.memberSport {
+  font-size: 0.75rem;
+  color: #f59e0b;
+  font-weight: 500;
+}
+
+.memberRole {
+  font-size: 0.75rem;
+  color: #6b7280;
+  text-transform: capitalize;
+}
+
+.achievementItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #f3f4f6;
+  font-size: 0.9rem;
+}
+
+.achievementItem:last-child {
+  border-bottom: none;
+}
+
+.achievementMeta {
+  color: #9ca3af;
+  font-size: 0.8rem;
+}
+
+.loading {
+  text-align: center;
+  padding: 3rem;
+  color: #9ca3af;
+}
