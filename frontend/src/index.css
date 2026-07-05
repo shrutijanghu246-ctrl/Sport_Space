@@ -58,3 +58,12 @@ select {
   background: #d1d5db;
   border-radius: 3px;
 }
+
+/* === responsiveness ==*/
+/*Navbar*/
+@media (max-width: 768px) {
+  /*hide nav labels, show only icons*/
+  .navLabel {
+    display: none;
+  }
+}

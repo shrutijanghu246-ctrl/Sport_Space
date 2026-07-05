@@ -125,3 +125,13 @@
   border-radius: 16px;
   border: 1px solid #e5e7eb;
 }
+
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem 0.75rem;
+  }
+
+  .tabs {
+    flex-direction: row;
+  }
+}

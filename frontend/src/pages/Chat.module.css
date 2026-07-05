@@ -154,3 +154,15 @@
 .sendBtn:hover {
   background-color: #1f2937;
 }
+
+@media (max-width: 768px) {
+  .container {
+    padding: 0.75rem;
+    height: calc(100vh - 60px);
+  }
+
+  .myBubble,
+  .theirBubble {
+    max-width: 85%;
+  }
+}

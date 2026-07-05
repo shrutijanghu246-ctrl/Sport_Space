@@ -29,9 +29,8 @@ function PublicProfile() {
 
   return (
     <div style={styles.container}>
-      {/* Profile Header */}
       <div style={styles.profileCard}>
-        <div style={styles.avatar}>
+        <div style={styles.avatarPlaceholder}>
           {profileUser.profilePic ? (
             <img
               src={profileUser.profilePic}
@@ -39,38 +38,34 @@ function PublicProfile() {
               style={styles.avatarImg}
             />
           ) : (
-            <div style={styles.avatarPlaceholder}>{profileUser.name?.[0]}</div>
+            <span>{profileUser.name?.[0]}</span>
           )}
         </div>
         <div style={styles.profileInfo}>
           <h2 style={styles.name}>{profileUser.name}</h2>
-          <p style={styles.sport}>🏃 {profileUser.sport}</p>
+          <p style={styles.sport}>{profileUser.sport}</p>
           <p style={styles.role}>{profileUser.role} • NIT Kurukshetra</p>
           {profileUser.bio && <p style={styles.bio}>{profileUser.bio}</p>}
         </div>
       </div>
 
-      {/* Achievements */}
       {profileUser.achievements?.length > 0 && (
         <div style={styles.section}>
-          <h3 style={styles.sectionTitle}>🏆 Achievements</h3>
-          <div style={styles.achievementsList}>
-            {profileUser.achievements.map((a) => (
-              <div key={a._id} style={styles.achievementItem}>
-                <span>🏅 {a.title}</span>
-                <span style={styles.achievementDate}>
-                  {a.date ? new Date(a.date).toLocaleDateString() : ""}
-                </span>
-              </div>
-            ))}
-          </div>
+          <h3 style={styles.sectionTitle}>Achievements</h3>
+          {profileUser.achievements.map((a) => (
+            <div key={a._id} style={styles.achievementItem}>
+              <span>{a.title}</span>
+              <span style={styles.achievementDate}>
+                {a.date ? new Date(a.date).toLocaleDateString() : ""}
+              </span>
+            </div>
+          ))}
         </div>
       )}
 
-      {/* Public Posts */}
       {posts.length > 0 && (
         <div style={styles.section}>
-          <h3 style={styles.sectionTitle}>📝 Recent Posts</h3>
+          <h3 style={styles.sectionTitle}>Recent Posts</h3>
           {posts.map((post) => (
             <div key={post._id} style={styles.postCard}>
               <p>{post.content}</p>
@@ -89,24 +84,34 @@ const styles = {
   container: {
     maxWidth: "700px",
     margin: "0 auto",
-    padding: "1.5rem 1rem",
+    padding: "2rem 1rem",
   },
   loading: {
     textAlign: "center",
     padding: "3rem",
-    color: "#666",
+    color: "#9ca3af",
   },
   profileCard: {
-    backgroundColor: "white",
-    borderRadius: "12px",
-    padding: "1.5rem",
-    boxShadow: "0 2px 4px rgba(0,0,0,0.05)",
+    background: "linear-gradient(135deg, #0a0f1e 0%, #1f2937 100%)",
+    borderRadius: "16px",
+    padding: "2rem",
     display: "flex",
     gap: "1.5rem",
     alignItems: "center",
     marginBottom: "1.5rem",
+    color: "white",
   },
-  avatar: {
+  avatarPlaceholder: {
+    width: "80px",
+    height: "80px",
+    borderRadius: "50%",
+    backgroundColor: "#f59e0b",
+    color: "#0a0f1e",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    fontSize: "2rem",
+    fontWeight: "800",
     flexShrink: 0,
   },
   avatarImg: {
@@ -115,74 +120,67 @@ const styles = {
     borderRadius: "50%",
     objectFit: "cover",
   },
-  avatarPlaceholder: {
-    width: "80px",
-    height: "80px",
-    borderRadius: "50%",
-    backgroundColor: "#2563eb",
-    color: "white",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    fontSize: "2rem",
-    fontWeight: "600",
-  },
   profileInfo: {
     flex: 1,
   },
   name: {
     fontSize: "1.5rem",
-    fontWeight: "700",
+    fontWeight: "800",
     marginBottom: "0.25rem",
+    letterSpacing: "-0.5px",
   },
   sport: {
-    color: "#2563eb",
+    color: "#f59e0b",
     fontWeight: "600",
     marginBottom: "0.25rem",
   },
   role: {
-    color: "#666",
-    fontSize: "0.9rem",
+    color: "#9ca3af",
+    fontSize: "0.875rem",
     marginBottom: "0.5rem",
     textTransform: "capitalize",
   },
   bio: {
-    color: "#444",
-    fontSize: "0.95rem",
+    color: "#d1d5db",
+    fontSize: "0.9rem",
   },
   section: {
-    backgroundColor: "white",
-    borderRadius: "12px",
-    padding: "1.25rem",
-    boxShadow: "0 2px 4px rgba(0,0,0,0.05)",
+    background: "white",
+    borderRadius: "16px",
+    padding: "1.5rem",
+    border: "1px solid #e5e7eb",
     marginBottom: "1rem",
+    boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
   },
   sectionTitle: {
-    fontSize: "1.1rem",
-    fontWeight: "600",
+    fontSize: "0.875rem",
+    fontWeight: "700",
+    color: "#6b7280",
+    textTransform: "uppercase",
+    letterSpacing: "0.05em",
     marginBottom: "1rem",
-  },
-  achievementsList: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "0.5rem",
   },
   achievementItem: {
     display: "flex",
     justifyContent: "space-between",
-    padding: "0.5rem 0",
-    borderBottom: "1px solid #f5f5f5",
+    padding: "0.625rem 0",
+    borderBottom: "1px solid #f3f4f6",
+    fontSize: "0.9rem",
+    color: "#374151",
   },
   achievementDate: {
-    color: "#999",
-    fontSize: "0.85rem",
+    color: "#9ca3af",
+    fontSize: "0.8rem",
   },
   postCard: {
     padding: "0.75rem 0",
-    borderBottom: "1px solid #f5f5f5",
+    borderBottom: "1px solid #f3f4f6",
+    color: "#374151",
+    fontSize: "0.9rem",
+    lineHeight: "1.6",
   },
   postDate: {
-    color: "#999",
+    color: "#9ca3af",
     fontSize: "0.8rem",
     marginTop: "0.25rem",
   },

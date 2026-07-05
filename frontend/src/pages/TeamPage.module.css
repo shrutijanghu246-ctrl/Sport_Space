@@ -210,3 +210,29 @@
   padding: 3rem;
   color: #9ca3af;
 }
+
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem 0.75rem;
+  }
+
+  .teamHeader {
+    flex-direction: column;
+    text-align: center;
+    padding: 1.5rem;
+  }
+
+  .leadershipRow {
+    flex-direction: column;
+  }
+
+  .memberGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .memberGrid {
+    grid-template-columns: 1fr;
+  }
+}

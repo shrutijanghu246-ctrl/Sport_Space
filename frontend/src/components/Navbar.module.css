@@ -121,3 +121,23 @@
   border-color: #f59e0b;
   color: #f59e0b;
 }
+
+@media (max-width: 900px) {
+  .navLinks {
+    display: none;
+  }
+
+  .navInner {
+    padding: 0 1rem;
+  }
+
+  .userName {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .logo span {
+    display: none;
+  }
+}

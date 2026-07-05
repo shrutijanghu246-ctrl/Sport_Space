@@ -109,12 +109,13 @@ const styles = {
   },
   card: {
     backgroundColor: "white",
-    padding: "2.5rem",
+    padding: "2rem 1.5rem",
     borderRadius: "16px",
     boxShadow: "0 4px 24px rgba(0,0,0,0.08)",
     width: "100%",
     maxWidth: "420px",
     border: "1px solid #e5e7eb",
+    margin: "1rem",
   },
   logo: {
     display: "flex",
