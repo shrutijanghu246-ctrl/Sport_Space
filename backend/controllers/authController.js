@@ -40,6 +40,7 @@ const register = async (req, res) => {
       userId: user._id,
     });
   } catch (err) {
+    console.error("REGISTER ERROR:", err.message, err.stack);
     res.status(500).json({ message: "Server error", error: err.message });
   }
 };
