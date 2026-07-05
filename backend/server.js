@@ -6,7 +6,9 @@ const connectDB = require("./config/db");
 const http = require("http");
 const { Server } = require("socket.io");
 
-dotenv.config();
+if (process.env.NODE_ENV !== "production") {
+  require("dotenv").config();
+}
 connectDB();
 
 const app = express();
