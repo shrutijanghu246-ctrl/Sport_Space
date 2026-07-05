@@ -15,6 +15,7 @@ const createTeam = async (req, res) => {
 
     res.status(201).json({ message: "Team created successfully", team });
   } catch (err) {
+    console.error("❌ CREATE TEAM ERROR:", err.message, err.stack);
     res.status(500).json({
       message: "Server error",
       error: err.message,
@@ -25,14 +26,17 @@ const createTeam = async (req, res) => {
 //GET ALL TEAMS(public)
 const getAllTeams = async (req, res) => {
   try {
+    console.log("📋 Fetching all teams");
     const teams = await Team.find()
       .populate("captain.boys", "name email sport")
       .populate("captain.girls", "name email sport")
       .populate("coach", "name email")
       .select("-members"); //don't expose member list publicly
 
+    console.log("✅ Teams fetched:", teams.length, "teams");
     res.status(200).json({ teams });
   } catch (err) {
+    console.error("❌ GET ALL TEAMS ERROR:", err.message, err.stack);
     res.status(500).json({ message: "Server error", error: err.message });
   }
 };
@@ -40,6 +44,7 @@ const getAllTeams = async (req, res) => {
 //get single team(public)
 const getTeam = async (req, res) => {
   try {
+    console.log("📋 Fetching team:", req.params.id);
     const team = await Team.findById(req.params.id)
       .populate("captain.boys", "name sport profilePic")
       .populate("captain.girls", "name sport profilePic")
@@ -47,11 +52,14 @@ const getTeam = async (req, res) => {
       .populate("members", "name sport profilePic");
 
     if (!team) {
+      console.log("❌ Team not found:", req.params.id);
       return res.status(404).json({ message: "Team not found" });
     }
 
+    console.log("✅ Team fetched:", team.name);
     res.status(200).json({ team });
   } catch (err) {
+    console.error("❌ GET TEAM ERROR:", err.message, err.stack);
     res.status(500).json({ message: "Server error", error: err.message });
   }
 };
@@ -79,6 +87,7 @@ const addMember = async (req, res) => {
 
     res.status(200).json({ message: "Member added successfully", team });
   } catch (err) {
+    console.error("❌ ADD MEMBER ERROR:", err.message, err.stack);
     res.status(500).json({ message: "Server error", error: err.message });
   }
 };
@@ -100,8 +109,9 @@ const removeMember = async (req, res) => {
 
     await User.findByIdAndUpdate(userId, { team: null });
 
-    res.status(200).json({ message: "Mmeber removed successfully" });
+    res.status(200).json({ message: "Member removed successfully" });
   } catch (err) {
+    console.error("❌ REMOVE MEMBER ERROR:", err.message, err.stack);
     res.status(500).json({ message: "Server error", error: err.message });
   }
 };
@@ -121,11 +131,12 @@ const addAchievement = async (req, res) => {
 
     res.status(201).json({ message: "Achievement added successfuly", team });
   } catch (err) {
+    console.error("❌ ADD ACHIEVEMENT ERROR:", err.message, err.stack);
     res.status(500).json({ message: "Server error", error: err.message });
   }
 };
 
-//delete team acheievment (captain/admin only)
+//delete team achievement (captain/admin only)
 const deleteAchievement = async (req, res) => {
   try {
     const team = await Team.findById(req.params.teamId);
@@ -141,6 +152,7 @@ const deleteAchievement = async (req, res) => {
     await team.save();
     res.status(200).json({ message: "Achievement deleted successfully" });
   } catch (err) {
+    console.error("❌ DELETE ACHIEVEMENT ERROR:", err.message, err.stack);
     res.status(500).json({ message: "Server error", error: err.message });
   }
 };
