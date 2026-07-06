@@ -9,6 +9,8 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: 0.75rem;
 }
 
 .heading {
@@ -268,11 +270,34 @@
     padding: 1rem 0.75rem;
   }
 
+  .heading {
+    font-size: 1.2rem;
+  }
+
+  .headerRow {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .addBtn {
+    width: 100%;
+    justify-content: center;
+  }
+
   .row {
     flex-direction: column;
   }
 
   .statsRow {
     flex-wrap: wrap;
+  }
+
+  .formCard {
+    padding: 1rem;
+  }
+
+  .submitBtn {
+    width: 100%;
+    justify-content: center;
   }
 }

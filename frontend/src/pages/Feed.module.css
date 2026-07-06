@@ -134,4 +134,13 @@
   .tabs {
     flex-direction: row;
   }
+
+  .submitBtn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .createPost {
+    padding: 1rem;
+  }
 }
