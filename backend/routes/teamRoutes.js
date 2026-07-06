@@ -8,9 +8,19 @@ const {
   removeMember,
   addAchievement,
   deleteAchievement,
+  createTeamAndJoin,
 } = require("../controllers/teamController");
 const { isLoggedIn, authorizeRoles } = require("../middleware/authMiddleware");
 
+// Specific routes BEFORE generic routes
+router.post(
+  "/create-and-join",
+  isLoggedIn,
+  authorizeRoles("admin", "captain"),
+  createTeamAndJoin,
+); //captain creates team and joins automatically
+
+// Generic routes AFTER specific routes
 router.post("/", isLoggedIn, authorizeRoles("admin", "captain"), createTeam);
 router.get("/", getAllTeams); //public
 router.get("/:id", getTeam); //public
