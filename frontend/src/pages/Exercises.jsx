@@ -153,7 +153,7 @@ function Exercises() {
               name="sport"
               value={form.sport}
               onChange={handleChange}
-              style={styles.input}
+              className={styles.input}
               required
             >
               <option value="">Select Sport</option>
