@@ -16,7 +16,9 @@ function Achievements() {
   });
   const [personalForm, setPersonalForm] = useState({ title: "", date: "" });
 
-  const isPrivileged = ["captain", "admin"].includes(user?.role);
+  const isPrivileged = ["captain", "admin", "vice_captain"].includes(
+    user?.role,
+  );
 
   const fetchTeamAchievements = async () => {
     try {

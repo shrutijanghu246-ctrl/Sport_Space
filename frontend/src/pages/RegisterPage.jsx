@@ -94,6 +94,7 @@ function RegisterPage() {
           >
             <option value="member">Member</option>
             <option value="captain">Captain</option>
+            <option value="vice_captain">Vice Captain</option>
             <option value="coach">Coach</option>
           </select>
           <select

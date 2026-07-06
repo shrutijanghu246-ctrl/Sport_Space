@@ -21,7 +21,9 @@ function Exercises() {
     tips: "",
   });
 
-  const isPrivileged = ["captain", "coach", "admin"].includes(user?.role);
+  const isPrivileged = ["captain", "coach", "admin", "vice_captain"].includes(
+    user?.role,
+  );
 
   const fetchExercises = async () => {
     try {

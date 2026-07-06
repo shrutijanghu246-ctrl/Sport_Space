@@ -14,7 +14,8 @@ function PostCard({ post, onUpdate }) {
     (id) => id.toString() === (user?._id || user?.id)?.toString(),
   );
   const canDelete =
-    user?.id === post.author?._id || ["captain", "admin"].includes(user?.role);
+    user?.id === post.author?._id ||
+    ["captain", "admin", "vice_captain"].includes(user?.role);
 
   const handleDelete = async () => {
     if (!window.confirm("Delete this post?")) return;
