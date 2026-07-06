@@ -52,6 +52,12 @@ function Dashboard() {
       desc: "Sport-specific exercise recommendations",
       path: "/exercises",
     },
+    {
+      icon: <Users size={22} />,
+      title: "My Team",
+      desc: "View your team members and activity",
+      path: user?.team ? "/team" : "/teams",
+    },
   ];
 
   return (

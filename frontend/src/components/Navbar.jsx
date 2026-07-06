@@ -30,7 +30,7 @@ function Navbar() {
   const navItems = [
     { path: "/dashboard", label: "Home", icon: <Home size={16} /> },
     { path: "/feed", label: "Feed", icon: <Newspaper size={16} /> },
-    { path: "/team", label: "Team", icon: <Users size={16} /> },
+    { path: "/teams", label: "Teams", icon: <Users size={16} /> },
     { path: "/chat", label: "Chat", icon: <MessageCircle size={16} /> },
     {
       path: "/achievements",

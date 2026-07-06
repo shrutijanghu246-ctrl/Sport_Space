@@ -12,6 +12,7 @@ import DietTracker from "./pages/DietTracker";
 import Exercises from "./pages/Exercises";
 import TeamPage from "./pages/TeamPage";
 import VerifyOTP from "./pages/VerifyOTP";
+import Teams from "./pages/Teams";
 
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
@@ -90,6 +91,14 @@ function App() {
         element={
           <ProtectedRoute>
             <TeamPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/teams"
+        element={
+          <ProtectedRoute>
+            <Teams />
           </ProtectedRoute>
         }
       />
