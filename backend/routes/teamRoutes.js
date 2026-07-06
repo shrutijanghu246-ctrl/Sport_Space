@@ -9,6 +9,7 @@ const {
   addAchievement,
   deleteAchievement,
   createTeamAndJoin,
+  joinTeam,
 } = require("../controllers/teamController");
 const { isLoggedIn, authorizeRoles } = require("../middleware/authMiddleware");
 
@@ -48,5 +49,7 @@ router.delete(
   authorizeRoles("captain", "admin"),
   deleteAchievement,
 );
+
+router.post("/:id/join", isLoggedIn, joinTeam);
 
 module.exports = router;

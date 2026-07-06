@@ -150,6 +150,29 @@ const removeMember = async (req, res) => {
   }
 };
 
+const joinTeam = async (req, res) => {
+  try {
+    const team = await Team.findById(req.params.id);
+
+    if (!team) {
+      return res.status(404).json({ message: "Team not found" });
+    }
+
+    if (team.members.includes(req.user._id)) {
+      return res.status(400).json({ message: "Already a member!" });
+    }
+
+    team.members.push(req.user._id);
+    await team.save();
+
+    await User.findByIdAndUpdate(req.user._id, { team: team._id });
+
+    res.status(200).json({ message: "Joined team successfully!" });
+  } catch (err) {
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+};
+
 //add team achievements(captain/admin only)
 const addAchievement = async (req, res) => {
   try {
@@ -200,4 +223,5 @@ module.exports = {
   removeMember,
   addAchievement,
   deleteAchievement,
+  joinTeam,
 };
