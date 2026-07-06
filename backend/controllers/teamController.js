@@ -38,18 +38,22 @@ const createTeamAndJoin = async (req, res) => {
       sport,
       description,
       members: [req.user._id], // Add captain as member
+      captain: {
+        boys: req.user.gender === "male" ? req.user._id : null,
+        girls: req.user.gender === "female" ? req.user._id : null,
+      },
     });
 
     // Update user's team field
     await User.findByIdAndUpdate(req.user._id, { team: team._id });
 
-    console.log("✅ Team created and captain joined:", team.name);
+    console.log("Team created and captain joined:", team.name);
     res.status(201).json({
       message: "Team created successfully and you joined!",
       team,
     });
   } catch (err) {
-    console.error("❌ CREATE TEAM AND JOIN ERROR:", err.message, err.stack);
+    console.error("ERROR:", err.message, err.stack);
     res.status(500).json({
       message: "Server error",
       error: err.message,
@@ -160,6 +164,25 @@ const joinTeam = async (req, res) => {
 
     if (team.members.includes(req.user._id)) {
       return res.status(400).json({ message: "Already a member!" });
+    }
+
+    //handle captain assignment
+    if (req.user.role === "captain") {
+      if (req.user.gender === "female") {
+        if (team.captain.girls) {
+          return res
+            .status(400)
+            .json({ message: "Girls captain sport already taken!" });
+        }
+        team.captain.girls = req.user._id;
+      } else {
+        if (team.captain.boys) {
+          return res
+            .status(400)
+            .json({ message: "Boys captain spot already taken!" });
+        }
+        team.captain.boys = req.user._id;
+      }
     }
 
     team.members.push(req.user._id);

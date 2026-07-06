@@ -10,6 +10,7 @@ function RegisterPage() {
     password: "",
     role: "member",
     sport: "",
+    gender: "",
   });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -104,6 +105,17 @@ function RegisterPage() {
             style={styles.input}
             required
           />
+          <select
+            name="gender"
+            value={formData.gender}
+            onChange={handleChange}
+            style={styles.input}
+            required
+          >
+            <option value="">Select Gender</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+          </select>
           <button type="submit" style={styles.button} disabled={loading}>
             {loading ? "Creating account..." : "Create Account →"}
           </button>

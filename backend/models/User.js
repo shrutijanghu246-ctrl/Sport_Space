@@ -51,6 +51,11 @@ const userSchema = new mongoose.Schema(
       code: String,
       expiresAt: Date,
     },
+    gender: {
+      type: String,
+      enum: ["male", "female"],
+      required: false,
+    },
   },
   { timestamps: true },
 ); // adds createdAt and updatedAt automatically
