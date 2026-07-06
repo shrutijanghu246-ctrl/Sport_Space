@@ -147,14 +147,30 @@ function Exercises() {
               className={styles.input}
               required
             />
-            <input
+            <select
               name="sport"
-              placeholder="Sport (e.g. Athletics)"
               value={form.sport}
               onChange={handleChange}
-              className={styles.input}
+              style={styles.input}
               required
-            />
+            >
+              <option value="">Select Sport</option>
+              <option value="Athletics">Athletics</option>
+              <option value="Football">Football</option>
+              <option value="Cricket">Cricket</option>
+              <option value="Basketball">Basketball</option>
+              <option value="Volleyball">Volleyball</option>
+              <option value="Badminton">Badminton</option>
+              <option value="Table Tennis">Table Tennis</option>
+              <option value="Chess">Chess</option>
+              <option value="Swimming">Swimming</option>
+              <option value="Kabaddi">Kabaddi</option>
+              <option value="Kho Kho">Kho Kho</option>
+              <option value="Tennis">Tennis</option>
+              <option value="Hockey">Hockey</option>
+              <option value="Wrestling">Wrestling</option>
+              <option value="Weightlifting">Weightlifting</option>
+            </select>
             <textarea
               name="description"
               placeholder="Description — why this exercise helps"
