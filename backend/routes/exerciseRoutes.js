@@ -10,14 +10,14 @@ const { isLoggedIn, authorizeRoles } = require("../middleware/authMiddleware");
 router.post(
   "/",
   isLoggedIn,
-  authorizeRoles("captain", "coach", "admin"),
+  authorizeRoles("captain", "coach", "admin", "vice_captain"),
   addExercise,
 );
 router.get("/", isLoggedIn, getTeamExercises);
 router.delete(
   "/:id",
   isLoggedIn,
-  authorizeRoles("captain", "coach", "admin"),
+  authorizeRoles("captain", "coach", "admin", "vice_captain"),
   deleteExercise,
 );
 
