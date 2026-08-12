@@ -1,0 +1,172 @@
+.container {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.loading {
+  text-align: center;
+  padding: 3rem;
+  color: #9ca3af;
+}
+
+.profileCard {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #0a0f1e 0%, #1a2332 55%, #1f2937 100%);
+  border-radius: 20px;
+  padding: 2rem;
+  display: flex;
+  gap: 1.75rem;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  color: white;
+  box-shadow: 0 20px 40px -12px rgba(10, 15, 30, 0.5);
+}
+
+.glow {
+  position: absolute;
+  top: -60px;
+  right: -60px;
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(245, 158, 11, 0.25) 0%,
+    rgba(245, 158, 11, 0) 70%
+  );
+  pointer-events: none;
+}
+
+.avatarRing {
+  position: relative;
+  z-index: 1;
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  padding: 3px;
+  background: linear-gradient(135deg, #f59e0b, #fbbf24);
+  flex-shrink: 0;
+  box-shadow: 0 8px 20px -6px rgba(245, 158, 11, 0.5);
+}
+
+.avatarPlaceholder {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-color: #f59e0b;
+  color: #0a0f1e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  font-weight: 800;
+  border: 3px solid #0a0f1e;
+}
+
+.avatarImg {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #0a0f1e;
+}
+
+.profileInfo {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+}
+
+.name {
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.5px;
+}
+
+.metaRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.5rem;
+}
+
+.sportBadge {
+  display: inline-block;
+  background: rgba(245, 158, 11, 0.15);
+  color: #fbbf24;
+  font-weight: 700;
+  font-size: 0.75rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  border: 1px solid rgba(245, 158, 11, 0.35);
+}
+
+.role {
+  color: #9ca3af;
+  font-size: 0.875rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.dot {
+  color: #4b5563;
+}
+
+.bio {
+  color: #d1d5db;
+  font-size: 0.9rem;
+  margin-top: 0.25rem;
+}
+
+.section {
+  background: white;
+  border-radius: 16px;
+  padding: 1.5rem;
+  border: 1px solid #e5e7eb;
+  margin-bottom: 1rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+.sectionTitle {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 1rem;
+}
+
+.achievementItem {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.625rem 0;
+  border-bottom: 1px solid #f3f4f6;
+  font-size: 0.9rem;
+  color: #374151;
+}
+
+.achievementDate {
+  color: #9ca3af;
+  font-size: 0.8rem;
+}
+
+.postCard {
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #f3f4f6;
+  color: #374151;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.postDate {
+  color: #9ca3af;
+  font-size: 0.8rem;
+  margin-top: 0.25rem;
+}

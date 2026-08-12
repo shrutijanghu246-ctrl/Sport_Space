@@ -4,6 +4,7 @@ import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { Users, Crown, Trophy, Dumbbell } from "lucide-react";
 import styles from "./TeamPage.module.css";
+import { formatRole } from "../utils/formatRole";
 
 function TeamPage() {
   const { user } = useAuth();
@@ -125,7 +126,7 @@ function TeamPage() {
               <div>
                 <p className={styles.memberName}>{member.name}</p>
                 <p className={styles.memberSport}>{member.sport}</p>
-                <p className={styles.memberRole}>{member.role}</p>
+                <p className={styles.memberRole}>{formatRole(member.role)}</p>
               </div>
             </div>
           ))}

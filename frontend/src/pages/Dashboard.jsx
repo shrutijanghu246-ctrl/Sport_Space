@@ -10,6 +10,7 @@ import {
   Medal,
 } from "lucide-react";
 import styles from "./Dashboard.module.css";
+import { formatRole } from "../utils/formatRole";
 
 function Dashboard() {
   const { user } = useAuth();
@@ -66,7 +67,7 @@ function Dashboard() {
         <div className={styles.welcomeText}>
           <h2>Welcome back, {user?.name?.split(" ")[0]}!</h2>
           <p>
-            {user?.role} • {user?.sport} • NIT Kurukshetra
+            {formatRole(user?.role)} • {user?.sport} • NIT Kurukshetra
           </p>
         </div>
         <div className={styles.medalIcon}>

@@ -3,6 +3,7 @@ import axiosInstance from "../utils/axios";
 import { useAuth } from "../context/AuthContext";
 import { Dumbbell, Plus, Trash2, Search, X } from "lucide-react";
 import styles from "./Exercises.module.css";
+import { formatRole } from "../utils/formatRole";
 
 function Exercises() {
   const { user } = useAuth();
@@ -305,7 +306,7 @@ function Exercises() {
               )}
 
               <p className={styles.addedBy}>
-                Added by {ex.addedBy?.name} ({ex.addedBy?.role})
+                Added by {ex.addedBy?.name} ({formatRole(ex.addedBy?.role)})
               </p>
             </div>
           ))
