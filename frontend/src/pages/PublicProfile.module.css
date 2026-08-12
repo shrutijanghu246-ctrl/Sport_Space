@@ -170,3 +170,52 @@
   font-size: 0.8rem;
   margin-top: 0.25rem;
 }
+
+.statStrip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: white;
+  border-radius: 16px;
+  padding: 1.25rem 1.5rem;
+  border: 1px solid #e5e7eb;
+  margin-bottom: 1rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+.statItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  text-align: center;
+}
+
+.statValue {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #0a0f1e;
+  white-space: nowrap;
+}
+
+.statLabel {
+  font-size: 0.7rem;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-top: 0.25rem;
+}
+
+.statDivider {
+  width: 1px;
+  height: 32px;
+  background: #e5e7eb;
+  flex-shrink: 0;
+}
+
+.emptyState {
+  color: #9ca3af;
+  font-size: 0.875rem;
+  font-style: italic;
+  padding: 0.5rem 0;
+}

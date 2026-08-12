@@ -62,33 +62,68 @@ function PublicProfile() {
         </div>
       </div>
 
-      {profileUser.achievements?.length > 0 && (
-        <div className={styles.section}>
-          <h3 className={styles.sectionTitle}>Achievements</h3>
-          {profileUser.achievements.map((a) => (
+      <div className={styles.statStrip}>
+        <div className={styles.statItem}>
+          <span className={styles.statValue}>
+            {profileUser.achievements?.length || 0}
+          </span>
+          <span className={styles.statLabel}>Achievements</span>
+        </div>
+        <div className={styles.statDivider} />
+        <div className={styles.statItem}>
+          <span className={styles.statValue}>{posts.length}</span>
+          <span className={styles.statLabel}>Posts</span>
+        </div>
+        <div className={styles.statDivider} />
+        <div className={styles.statItem}>
+          <span className={styles.statValue}>
+            {profileUser.team?.name || "—"}
+          </span>
+          <span className={styles.statLabel}>Team</span>
+        </div>
+        <div className={styles.statDivider} />
+        <div className={styles.statItem}>
+          <span className={styles.statValue}>
+            {new Date(profileUser.createdAt).toLocaleDateString("en-US", {
+              month: "short",
+              year: "numeric",
+            })}
+          </span>
+          <span className={styles.statLabel}>Member Since</span>
+        </div>
+      </div>
+
+      <div className={styles.section}>
+        <h3 className={styles.sectionTitle}>Achievements</h3>
+        {profileUser.achievements?.length > 0 ? (
+          profileUser.achievements.map((a) => (
             <div key={a._id} className={styles.achievementItem}>
               <span>{a.title}</span>
               <span className={styles.achievementDate}>
                 {a.date ? new Date(a.date).toLocaleDateString() : ""}
               </span>
             </div>
-          ))}
-        </div>
-      )}
+          ))
+        ) : (
+          <p className={styles.emptyState}>No achievements added yet.</p>
+        )}
+      </div>
 
-      {posts.length > 0 && (
-        <div className={styles.section}>
-          <h3 className={styles.sectionTitle}>Recent Posts</h3>
-          {posts.map((post) => (
+      <div className={styles.section}>
+        <h3 className={styles.sectionTitle}>Recent Posts</h3>
+        {posts.length > 0 ? (
+          posts.map((post) => (
             <div key={post._id} className={styles.postCard}>
               <p>{post.content}</p>
               <p className={styles.postDate}>
                 {new Date(post.createdAt).toLocaleDateString()}
               </p>
             </div>
-          ))}
-        </div>
-      )}
+          ))
+        ) : (
+          <p className={styles.emptyState}>No posts yet.</p>
+        )}
+      </div>
     </div>
   );
 }
