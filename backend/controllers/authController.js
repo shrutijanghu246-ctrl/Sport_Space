@@ -244,9 +244,9 @@ const deletePersonalAchievement = async (req, res) => {
 // GET PUBLIC PROFILE
 const getPublicProfile = async (req, res) => {
   try {
-    const profileUser = await User.findById(req.params.userId).select(
-      "-password -email",
-    );
+    const profileUser = await User.findById(req.params.userId)
+      .select("-password -email")
+      .populate("team", "name");
 
     if (!profileUser) {
       return res.status(404).json({ message: "User not found" });
