@@ -2,13 +2,18 @@ const express = require("express");
 const dotenv = require("dotenv");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
-const connectDB = require("./config/db");
+const dns = require("dns");
 const http = require("http");
 const { Server } = require("socket.io");
 
 if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
 }
+
+// Must run BEFORE connectDB() so Mongoose's SRV lookup uses these DNS servers
+dns.setServers(["8.8.8.8", "1.1.1.1"]);
+
+const connectDB = require("./config/db");
 connectDB();
 
 const app = express();
@@ -126,28 +131,28 @@ app.get("/debug", (req, res) => {
 app.post("/test-otp-email", async (req, res) => {
   try {
     const { email } = req.body;
-    
+
     if (!email) {
       return res.status(400).json({ message: "Email is required" });
     }
 
     console.log("🧪 Testing OTP email to:", email);
-    
+
     const testOTP = "123456";
     const sendOTPEmail = require("./utils/sendEmail");
-    
+
     await sendOTPEmail(email, testOTP);
-    
-    res.status(200).json({ 
+
+    res.status(200).json({
       message: "✅ Test OTP email sent successfully!",
       testEmail: email,
-      testOTP: testOTP
+      testOTP: testOTP,
     });
   } catch (err) {
     console.error("❌ Test email failed:", err.message);
-    res.status(500).json({ 
+    res.status(500).json({
       message: "❌ Failed to send test email",
-      error: err.message 
+      error: err.message,
     });
   }
 });
