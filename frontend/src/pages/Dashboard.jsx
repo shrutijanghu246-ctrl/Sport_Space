@@ -13,29 +13,42 @@ function Dashboard() {
   const navigate = useNavigate();
   const [posts, setPosts] = useState([]);
   const [achievements, setAchievements] = useState([]);
+  const [postsError, setPostsError] = useState(false);
+  const [achError, setAchError] = useState(false);
   const [loading, setLoading] = useState(true);
 
   const fetchLatest = async () => {
-    try {
-      const [feedRes, teamRes] = await Promise.all([
-        axiosInstance.get(`/posts/team/${user.team}`),
-        axiosInstance.get(`/teams/${user.team}`),
-      ]);
+    // allSettled: each request succeeds or fails on its own
+    const [feedRes, teamRes] = await Promise.allSettled([
+      axiosInstance.get(`/posts/team/${user.team}`),
+      axiosInstance.get(`/teams/${user.team}`),
+    ]);
 
+    if (feedRes.status === "fulfilled") {
       // quick posts only (training logs are private), newest 5
-      setPosts(feedRes.data.posts.filter((p) => p.type === "post").slice(0, 5));
+      setPosts(
+        feedRes.value.data.posts.filter((p) => p.type === "post").slice(0, 5),
+      );
+      setPostsError(false);
+    } else {
+      console.error("Posts request failed:", feedRes.reason);
+      setPostsError(true);
+    }
 
+    if (teamRes.status === "fulfilled") {
       // newest 3 achievements by date
       setAchievements(
-        [...(teamRes.data.team.achievements || [])]
+        [...(teamRes.value.data.team.achievements || [])]
           .sort((a, b) => new Date(b.date) - new Date(a.date))
           .slice(0, 3),
       );
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
+      setAchError(false);
+    } else {
+      console.error("Team request failed:", teamRes.reason);
+      setAchError(true);
     }
+
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -74,7 +87,11 @@ function Dashboard() {
                 View all
               </button>
             </div>
-            {posts.length === 0 ? (
+            {postsError ? (
+              <p className={styles.empty}>
+                Couldn't load posts. Try refreshing.
+              </p>
+            ) : posts.length === 0 ? (
               <p className={styles.empty}>
                 No posts yet. Be the first to share something!
               </p>
@@ -99,7 +116,11 @@ function Dashboard() {
                 View all
               </button>
             </div>
-            {achievements.length === 0 ? (
+            {achError ? (
+              <p className={styles.empty}>
+                Couldn't load achievements. Try refreshing.
+              </p>
+            ) : achievements.length === 0 ? (
               <p className={styles.empty}>No team achievements yet.</p>
             ) : (
               <div className={styles.achList}>
