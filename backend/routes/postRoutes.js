@@ -7,6 +7,7 @@ const {
   toggleLike,
   addComment,
   deletePost,
+  deleteComment,
 } = require("../controllers/postController");
 const { isLoggedIn } = require("../middleware/authMiddleware");
 
@@ -16,5 +17,6 @@ router.get("/team/:teamId", isLoggedIn, getTeamFeed);
 router.post("/:id/like", isLoggedIn, toggleLike);
 router.post("/:id/comment", isLoggedIn, addComment);
 router.delete("/:id", isLoggedIn, deletePost);
+router.delete("/:id/comment/:commentId", isLoggedIn, deleteComment);
 
 module.exports = router;
