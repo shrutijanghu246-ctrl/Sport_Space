@@ -13,6 +13,7 @@ import {
   Menu,
   X,
   Zap,
+  User,
 } from "lucide-react";
 import styles from "./Navbar.module.css";
 
@@ -40,6 +41,8 @@ function Navbar() {
     { path: "/diet", label: "Diet", icon: <Salad size={16} /> },
     { path: "/exercises", label: "Exercises", icon: <Dumbbell size={16} /> },
   ];
+
+  const profilePath = `/profile/${user?.id || user?._id}`;
 
   const handleNav = (path) => {
     navigate(path);
@@ -107,6 +110,16 @@ function Navbar() {
             {item.label}
           </button>
         ))}
+
+        {/* NEW: My Profile */}
+        <button
+          onClick={() => handleNav(profilePath)}
+          className={styles.mobileNavLink}
+        >
+          <User size={16} />
+          My Profile
+        </button>
+
         <button
           onClick={handleLogout}
           className={styles.mobileNavLink}

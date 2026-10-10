@@ -33,59 +33,84 @@
   font-size: 4rem;
 }
 
-.sectionTitle {
-  font-size: 1rem;
-  font-weight: 700;
-  color: #64748b;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  margin-bottom: 1rem;
-}
-
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 1rem;
-}
-
-.card {
-  background: white;
-  border-radius: 16px;
-  padding: 1.5rem;
-  cursor: pointer;
-  border: 1px solid #e2e8f0;
-  transition: all 0.2s ease;
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
 .card:hover {
   border-color: #f59e0b;
   box-shadow: 0 4px 12px rgba(245, 158, 11, 0.15);
   transform: translateY(-2px);
 }
 
-.cardIcon {
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
+.columns {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+.sectionTitle {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.viewAll {
+  background: none;
+  border: none;
+  color: #f59e0b;
+  font-size: 0.85rem;
+  font-weight: 600;
+  font-family: "Inter", sans-serif;
+  cursor: pointer;
+}
+.postList,
+.achList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.achItem {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.achIcon {
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+  border-radius: 10px;
   background-color: #fef3c7;
+  color: #f59e0b;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #f59e0b;
 }
-.cardTitle {
-  font-size: 1rem;
+.achTitle {
+  font-size: 0.95rem;
   font-weight: 700;
   color: #0f172a;
 }
-
-.cardDesc {
-  font-size: 0.85rem;
+.achMeta {
+  font-size: 0.8rem;
   color: #64748b;
-  line-height: 1.5;
+  margin-top: 0.15rem;
+}
+.empty {
+  color: #94a3b8;
+  font-size: 0.9rem;
+  text-align: center;
+  padding: 1.5rem 0;
 }
 
 .medalIcon {
@@ -108,13 +133,7 @@
     font-size: 1.35rem;
   }
 
-  .grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 480px) {
-  .grid {
+  .columns {
     grid-template-columns: 1fr;
   }
 }

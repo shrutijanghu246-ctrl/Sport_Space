@@ -15,7 +15,9 @@ function Teams() {
   const [form, setForm] = useState({ name: "", sport: "", description: "" });
   const [message, setMessage] = useState("");
 
-  const isPrivileged = ["captain", "admin"].includes(user?.role);
+  const isPrivileged = ["captain", "admin", "vice_captain", "coach"].includes(
+    user?.role,
+  );
 
   const fetchTeams = async () => {
     try {

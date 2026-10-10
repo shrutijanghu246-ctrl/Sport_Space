@@ -70,6 +70,7 @@
   align-items: center;
   gap: 1rem;
   flex-shrink: 0;
+  margin-left: auto;
 }
 
 .userInfo {
@@ -174,15 +175,15 @@
     padding: 0 1rem;
   }
 
+  .navRight {
+    margin-left: auto; /* pushes bell + avatar + hamburger to the right edge */
+  }
+
   .userName {
-    display: none;
+    display: none; /* name stays hidden, only the avatar circle shows */
   }
 
   .logoutBtn {
-    display: none;
-  }
-
-  .userInfo {
     display: none;
   }
 

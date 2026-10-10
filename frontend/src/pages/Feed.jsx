@@ -4,6 +4,7 @@ import { useAuth } from "../context/AuthContext";
 import PostCard from "../components/PostCard";
 import { Zap, ClipboardList, Send } from "lucide-react";
 import styles from "./Feed.module.css";
+import NoTeam from "../components/NoTeam";
 
 function Feed() {
   const { user } = useAuth();
@@ -57,6 +58,8 @@ function Feed() {
       console.error(err);
     }
   };
+
+  if (!user?.team) return <NoTeam message="Join a team to see its updates." />;
 
   if (loading)
     return (

@@ -10,18 +10,20 @@ function PostCard({ post, onUpdate }) {
   const [commentText, setCommentText] = useState("");
   const navigate = useNavigate();
 
-  const hasLiked = post.likes?.some(
-    (id) => id.toString() === (user?._id || user?.id)?.toString(),
-  );
+  const currentUserId = user?._id || user?.id;
+  const hasLiked =
+    !!currentUserId &&
+    post.likes?.some((id) => String(id) === String(currentUserId));
   const canDelete =
-    user?.id === post.author?._id ||
-    ["captain", "admin", "vice_captain"].includes(user?.role);
+    !!currentUserId &&
+    (String(post.author?._id) === String(currentUserId) ||
+      ["captain", "admin", "vice_captain", "coach"].includes(user?.role));
 
   const handleDelete = async () => {
     if (!window.confirm("Delete this post?")) return;
     try {
       await axiosInstance.delete(`/posts/${post._id}`);
-      onUpdate();
+      onUpdate?.();
     } catch (err) {
       console.error(err);
     }
@@ -30,7 +32,7 @@ function PostCard({ post, onUpdate }) {
   const handleLike = async () => {
     try {
       await axiosInstance.post(`/posts/${post._id}/like`);
-      onUpdate(); //refresh feed
+      onUpdate?.(); // refresh feed
     } catch (err) {
       console.error(err);
     }
@@ -45,7 +47,7 @@ function PostCard({ post, onUpdate }) {
         text: commentText,
       });
       setCommentText("");
-      onUpdate();
+      onUpdate?.();
     } catch (err) {
       console.error(err);
     }
