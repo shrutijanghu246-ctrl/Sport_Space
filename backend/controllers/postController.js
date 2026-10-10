@@ -152,7 +152,9 @@ const deletePost = async (req, res) => {
     }
 
     const isAuthor = post.author.toString() === req.user._id.toString();
-    const isPrivileged = ["captain", "admin"].includes(req.user.role);
+    const isPrivileged = ["captain", "vice_captain", "coach", "admin"].includes(
+      req.user.role,
+    );
 
     if (!isAuthor && !isPrivileged) {
       return res
