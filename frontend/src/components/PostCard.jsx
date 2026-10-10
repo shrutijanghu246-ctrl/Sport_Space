@@ -10,13 +10,31 @@ function PostCard({ post, onUpdate }) {
   const [commentText, setCommentText] = useState("");
   const navigate = useNavigate();
 
-  const currentUserId = user?._id || user?.id;
+  const myId = (user?._id || user?.id)?.toString();
+
+  const isPostAuthor = post.author?._id?.toString() === myId;
+  const isPrivilegedRole = [
+    "captain",
+    "vice_captain",
+    "coach",
+    "admin",
+  ].includes(user?.role);
+
+  const handleDeleteComment = async (commentId) => {
+    if (!window.confirm("Delete this comment?")) return;
+    try {
+      await axiosInstance.delete(`/posts/${post._id}/comment/${commentId}`);
+      onUpdate?.();
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   const hasLiked =
-    !!currentUserId &&
-    post.likes?.some((id) => String(id) === String(currentUserId));
+    !!myId && post.likes?.some((id) => String(id) === String(myId));
   const canDelete =
-    !!currentUserId &&
-    (String(post.author?._id) === String(currentUserId) ||
+    !!myId &&
+    (String(post.author?._id) === String(myId) ||
       ["captain", "admin", "vice_captain", "coach"].includes(user?.role));
 
   const handleDelete = async () => {
@@ -116,11 +134,45 @@ function PostCard({ post, onUpdate }) {
 
       {showComments && (
         <div style={styles.commentsSection}>
-          {post.comments?.map((c, i) => (
-            <div key={i} style={styles.comment}>
-              <strong>{c.author?.name}:</strong> {c.text}
-            </div>
-          ))}
+          {post.comments?.map((c) => {
+            const canDeleteComment =
+              c.author?._id?.toString() === myId ||
+              isPostAuthor ||
+              isPrivilegedRole;
+
+            return (
+              <div
+                key={c._id}
+                style={{
+                  ...styles.comment,
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "flex-start",
+                  gap: "0.5rem",
+                }}
+              >
+                <span>
+                  <strong>{c.author?.name}:</strong> {c.text}
+                </span>
+                {canDeleteComment && (
+                  <button
+                    onClick={() => handleDeleteComment(c._id)}
+                    style={{
+                      background: "none",
+                      border: "none",
+                      cursor: "pointer",
+                      color: "#ef4444",
+                      padding: 0,
+                      flexShrink: 0,
+                    }}
+                    title="Delete comment"
+                  >
+                    <Trash2 size={14} />
+                  </button>
+                )}
+              </div>
+            );
+          })}
 
           <form onSubmit={handleComment} style={styles.commentForm}>
             <input
