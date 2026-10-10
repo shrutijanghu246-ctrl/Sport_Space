@@ -1,6 +1,9 @@
 const Team = require("../models/Team");
 const User = require("../models/User");
 
+const belongsToTeam = (user, team) =>
+  user.role === "admin" || user.team?.toString() === team._id.toString();
+
 //create team
 const createTeam = async (req, res) => {
   try {
@@ -11,30 +14,12 @@ const createTeam = async (req, res) => {
       return res.status(400).json({ message: "Team already exists" });
     }
 
-    const isCoach = req.user.role === "coach";
-
-    const team = await Team.create({
-      name,
-      sport,
-      description,
-      members: [req.user._id],
-      ...(isCoach
-        ? { coach: req.user._id }
-        : {
-            captain: {
-              boys: req.user.gender === "male" ? req.user._id : null,
-              girls: req.user.gender === "female" ? req.user._id : null,
-            },
-          }),
-    });
+    const team = await Team.create({ name, sport, description });
 
     res.status(201).json({ message: "Team created successfully", team });
   } catch (err) {
-    console.error("❌ CREATE TEAM ERROR:", err.message, err.stack);
-    res.status(500).json({
-      message: "Server error",
-      error: err.message,
-    });
+    console.error("CREATE TEAM ERROR:", err.message, err.stack);
+    res.status(500).json({ message: "Server error", error: err.message });
   }
 };
 
@@ -97,7 +82,7 @@ const getAllTeams = async (req, res) => {
 //get single team(public)
 const getTeam = async (req, res) => {
   try {
-    console.log("📋 Fetching team:", req.params.id);
+    console.log("Fetching team:", req.params.id);
     const team = await Team.findById(req.params.id)
       .populate("captain.boys", "name sport profilePic")
       .populate("captain.girls", "name sport profilePic")
@@ -107,12 +92,6 @@ const getTeam = async (req, res) => {
     if (!team) {
       console.log("Team not found:", req.params.id);
       return res.status(404).json({ message: "Team not found" });
-    }
-
-    if (!belongsToTeam(req.user, team)) {
-      return res
-        .status(403)
-        .json({ message: "You can only manage your own team" });
     }
 
     console.log("Team fetched:", team.name);
@@ -131,6 +110,12 @@ const addMember = async (req, res) => {
 
     if (!team) {
       return res.status(404).json({ message: "Team not found" });
+    }
+
+    if (!belongsToTeam(req.user, team)) {
+      return res
+        .status(403)
+        .json({ message: "You can only manage your own team" });
     }
 
     //check if already a member
@@ -237,6 +222,12 @@ const addAchievement = async (req, res) => {
       return res.status(404).json({ message: "Team not found" });
     }
 
+    if (!belongsToTeam(req.user, team)) {
+      return res
+        .status(403)
+        .json({ message: "You can only manage your own team" });
+    }
+
     team.achievements.push({ title, competition, date });
     await team.save();
 
@@ -254,6 +245,12 @@ const deleteAchievement = async (req, res) => {
 
     if (!team) {
       return res.status(404).json({ message: "Team not found" });
+    }
+
+    if (!belongsToTeam(req.user, team)) {
+      return res
+        .status(403)
+        .json({ message: "You can only manage your own team" });
     }
 
     team.achievements = team.achievements.filter(
