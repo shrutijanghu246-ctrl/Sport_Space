@@ -170,6 +170,43 @@ const deletePost = async (req, res) => {
   }
 };
 
+//delete a comment (comment author, post author, or captain/vice captain/coach/admin)
+const deleteComment = async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id);
+    if (!post) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+
+    const comment = post.comments.id(req.params.commentId);
+    if (!comment) {
+      return res.status(404).json({ message: "Comment not found" });
+    }
+
+    const userId = req.user._id.toString();
+    const isCommentAuthor = comment.author?.toString() === userId;
+    const isPostAuthor = post.author.toString() === userId;
+    const isPrivileged =
+      ["captain", "vice_captain", "coach", "admin"].includes(req.user.role) &&
+      (req.user.role === "admin" ||
+        req.user.team?.toString() === post.team.toString());
+
+    if (!isCommentAuthor && !isPostAuthor && !isPrivileged) {
+      return res
+        .status(403)
+        .json({ message: "Not allowed to delete this comment" });
+    }
+
+    post.comments.pull(req.params.commentId);
+    await post.save();
+
+    res.status(200).json({ message: "Comment deleted" });
+  } catch (err) {
+    console.error("❌ DELETE COMMENT ERROR:", err.message, err.stack);
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+};
+
 module.exports = {
   createPost,
   getTeamFeed,
@@ -177,4 +214,5 @@ module.exports = {
   toggleLike,
   addComment,
   deletePost,
+  deleteComment,
 };
