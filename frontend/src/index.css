@@ -20,6 +20,11 @@ body {
   min-height: 100vh;
 }
 
+#root {
+  position: relative;
+  z-index: 1;
+}
+
 :root {
   --primary: #0a0f1e;
   --primary-dark: #111827;

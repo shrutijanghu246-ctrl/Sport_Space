@@ -13,6 +13,7 @@ import Exercises from "./pages/Exercises";
 import TeamPage from "./pages/TeamPage";
 import VerifyOTP from "./pages/VerifyOTP";
 import Teams from "./pages/Teams";
+import SportsBackground from "./components/SportsBackground";
 
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
@@ -33,77 +34,80 @@ const ProtectedRoute = ({ children }) => {
 
 function App() {
   return (
-    <Routes>
-      <Route path="/login" element={<LoginPage />} />
-      <Route path="/register" element={<RegisterPage />} />
-      <Route path="/verify-otp" element={<VerifyOTP />} />
-      <Route path="/profile/:userId" element={<PublicProfile />} />
-      <Route
-        path="/dashboard"
-        element={
-          <ProtectedRoute>
-            <Dashboard />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/feed"
-        element={
-          <ProtectedRoute>
-            <Feed />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/chat"
-        element={
-          <ProtectedRoute>
-            <Chat />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/achievements"
-        element={
-          <ProtectedRoute>
-            <Achievements />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/diet"
-        element={
-          <ProtectedRoute>
-            <DietTracker />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/exercises"
-        element={
-          <ProtectedRoute>
-            <Exercises />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/team"
-        element={
-          <ProtectedRoute>
-            <TeamPage />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/teams"
-        element={
-          <ProtectedRoute>
-            <Teams />
-          </ProtectedRoute>
-        }
-      />
-      <Route path="*" element={<Navigate to="/login" />} />
-    </Routes>
+    <>
+      <SportsBackground />
+      <Routes>
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+        <Route path="/verify-otp" element={<VerifyOTP />} />
+        <Route path="/profile/:userId" element={<PublicProfile />} />
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/feed"
+          element={
+            <ProtectedRoute>
+              <Feed />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/chat"
+          element={
+            <ProtectedRoute>
+              <Chat />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/achievements"
+          element={
+            <ProtectedRoute>
+              <Achievements />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/diet"
+          element={
+            <ProtectedRoute>
+              <DietTracker />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/exercises"
+          element={
+            <ProtectedRoute>
+              <Exercises />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/team"
+          element={
+            <ProtectedRoute>
+              <TeamPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/teams"
+          element={
+            <ProtectedRoute>
+              <Teams />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="*" element={<Navigate to="/login" />} />
+      </Routes>
+    </>
   );
 }
 

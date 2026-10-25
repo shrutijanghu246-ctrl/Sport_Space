@@ -106,7 +106,7 @@ const styles = {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#f9fafb",
+    backgroundColor: "transparent",
   },
   card: {
     backgroundColor: "white",

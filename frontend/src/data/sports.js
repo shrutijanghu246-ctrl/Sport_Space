@@ -1,0 +1,52 @@
+import {
+  PiPersonSimpleRun,
+  PiSoccerBall,
+  PiCricket,
+  PiBasketball,
+  PiVolleyball,
+  PiRacquet,
+  PiPingPong,
+  PiCastleTurret,
+  PiPersonSimpleSwim,
+  PiFlag,
+  PiTennisBall,
+  PiHockey,
+  PiHandFist,
+  PiBarbell,
+  PiTrophy,
+  PiMedal,
+  PiTimer,
+  PiFlagCheckered,
+  PiTarget,
+  PiLightning,
+  PiCrown,
+} from "react-icons/pi";
+
+// One entry per NIT KKR team (same names as the register dropdown and seedTeams.js)
+export const SPORTS = [
+  { name: "Athletics", Icon: PiPersonSimpleRun },
+  { name: "Football", Icon: PiSoccerBall },
+  { name: "Cricket", Icon: PiCricket },
+  { name: "Basketball", Icon: PiBasketball },
+  { name: "Volleyball", Icon: PiVolleyball },
+  { name: "Badminton", Icon: PiRacquet },
+  { name: "Table Tennis", Icon: PiPingPong },
+  { name: "Chess", Icon: PiCastleTurret },
+  { name: "Swimming", Icon: PiPersonSimpleSwim },
+  { name: "Kabaddi", Icon: PiFlag },
+  { name: "Kho Kho", Icon: PiFlag },
+  { name: "Tennis", Icon: PiTennisBall },
+  { name: "Hockey", Icon: PiHockey },
+  { name: "Wrestling", Icon: PiHandFist },
+  { name: "Weightlifting", Icon: PiBarbell },
+];
+
+export const EXTRA_ICONS = [
+  PiTrophy,
+  PiMedal,
+  PiTimer,
+  PiFlagCheckered,
+  PiTarget,
+  PiLightning,
+  PiCrown,
+];
