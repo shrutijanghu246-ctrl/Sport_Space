@@ -1,4 +1,5 @@
 const Message = require("../models/Message");
+const { emitTeamEvent } = require("../utils/socketAccess");
 
 const getTeamMessages = async (req, res) => {
   try {
@@ -51,7 +52,7 @@ const deleteForEveryone = async (req, res) => {
 
     // Emit to everyone in team room
     const io = req.app.get("io");
-    io.to(message.team.toString()).emit("messageDeleted", {
+    await emitTeamEvent(io, message.team.toString(), "messageDeleted", {
       messageId: message._id,
       deletedForEveryone: true,
     });

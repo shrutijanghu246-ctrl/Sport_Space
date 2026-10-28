@@ -1,6 +1,7 @@
 const Post = require("../models/Post");
 const Notification = require("../models/Notification");
 const Team = require("../models/Team");
+const { emitUserEvent } = require("../utils/socketAccess");
 
 //create post or log
 const createPost = async (req, res) => {
@@ -40,9 +41,17 @@ const createPost = async (req, res) => {
         ),
       );
 
-      notifications.forEach((notif) => {
-        io.to(notif.recipient.toString()).emit("newNotification", notif);
-      });
+      await Promise.all(
+        notifications.map((notif) =>
+          emitUserEvent(
+            io,
+            notif.recipient.toString(),
+            "newNotification",
+            notif,
+            team._id.toString(),
+          ),
+        ),
+      );
     }
 
     res.status(201).json({ message: "Post created successfully", post });

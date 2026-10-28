@@ -1,5 +1,6 @@
 const Team = require("../models/Team");
 const User = require("../models/User");
+const { evictUserTeamSockets } = require("../utils/socketAccess");
 
 const belongsToTeam = (user, team) =>
   user.role === "admin" || user.team?.toString() === team._id.toString();
@@ -51,7 +52,7 @@ const createTeamAndJoin = async (req, res) => {
     });
 
     await User.findByIdAndUpdate(req.user._id, { team: team._id });
-
+    await evictUserTeamSockets(req.app.get("io"), req.user._id.toString());
     res.status(201).json({
       message: "Team created successfully and you joined!",
       team,
@@ -128,6 +129,7 @@ const addMember = async (req, res) => {
 
     //also update the user's team field
     await User.findByIdAndUpdate(userId, { team: team._id });
+    await evictUserTeamSockets(req.app.get("io"), userId);
 
     res.status(200).json({ message: "Member added successfully", team });
   } catch (err) {
@@ -158,6 +160,7 @@ const removeMember = async (req, res) => {
     await team.save();
 
     await User.findByIdAndUpdate(userId, { team: null });
+    await evictUserTeamSockets(req.app.get("io"), userId);
 
     res.status(200).json({ message: "Member removed successfully" });
   } catch (err) {
@@ -205,7 +208,7 @@ const joinTeam = async (req, res) => {
     await team.save();
 
     await User.findByIdAndUpdate(req.user._id, { team: team._id });
-
+    await evictUserTeamSockets(req.app.get("io"), req.user._id.toString());
     res.status(200).json({ message: "Joined team successfully!" });
   } catch (err) {
     res.status(500).json({ message: "Server error", error: err.message });

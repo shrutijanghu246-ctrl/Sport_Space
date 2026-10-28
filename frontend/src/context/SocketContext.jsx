@@ -11,7 +11,10 @@ export const SocketProvider = ({ children }) => {
   useEffect(() => {
     if (!user) return;
 
-    const newSocket = io("https://sport-space.onrender.com");
+    const newSocket = io(
+      import.meta.env.VITE_API_URL || "https://sport-space.onrender.com",
+      { withCredentials: true },
+    );
     setSocket(newSocket);
 
     newSocket.on("connect", () => {

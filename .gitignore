@@ -10,3 +10,7 @@ frontend/dist/
 
 # Logs
 *.log
+
+# Private local test settings
+backend/.env.test
+frontend/.env.local

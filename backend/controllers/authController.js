@@ -2,6 +2,7 @@ const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const sendOTPEmail = require("../utils/sendEmail");
+const { endSocketSession } = require("../utils/socketAccess");
 
 // helper to generate OTP
 const generateOTP = () =>
@@ -10,8 +11,11 @@ const generateOTP = () =>
 // REGISTER
 const register = async (req, res) => {
   try {
-    console.log("Register hit!", req.body);
     const { name, email, password, role, sport } = req.body;
+    const allowedRoles = ["member", "captain", "vice_captain", "coach"];
+    if (role !== undefined && !allowedRoles.includes(role)) {
+      return res.status(400).json({ message: "Invalid registration role" });
+    }
 
     const existingUser = await User.findOne({ email });
     if (existingUser) {
@@ -34,16 +38,14 @@ const register = async (req, res) => {
       otp: { code: otp, expiresAt: otpExpiresAt },
     });
 
-    console.log("✅ User created in DB:", user._id);
-    console.log("📧 Attempting to send OTP to:", email);
+    console.log("User created in DB:", user._id);
+    console.log("Attempting to send OTP to:", email);
 
     try {
       await sendOTPEmail(email, otp);
-      console.log("✅ OTP email sent successfully!");
+      console.log("OTP email sent successfully!");
     } catch (emailErr) {
-      console.error("❌ CRITICAL: Email sending failed:", emailErr.message);
-      // Still return success so user knows to check spam/wait
-      // But log this error for debugging
+      console.error("CRITICAL: Email sending failed:", emailErr.message);
     }
 
     res.status(201).json({
@@ -95,6 +97,7 @@ const login = async (req, res) => {
       message: "Login successful",
       user: {
         id: user._id,
+        _id: user._id,
         name: user.name,
         email: user.email,
         role: user.role,
@@ -108,9 +111,20 @@ const login = async (req, res) => {
 };
 
 // LOGOUT
-const logout = (req, res) => {
-  res.clearCookie("token");
-  res.status(200).json({ message: "Logged out successfully" });
+const logout = async (req, res) => {
+  try {
+    await endSocketSession(req.app.get("io"), req.cookies?.token);
+    res.clearCookie("token", {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+    });
+    res.status(200).json({ message: "Logged out successfully" });
+  } catch {
+    res
+      .status(503)
+      .json({ message: "Logout could not finish. Please try again." });
+  }
 };
 
 // VERIFY OTP
@@ -244,10 +258,12 @@ const deletePersonalAchievement = async (req, res) => {
 // GET PUBLIC PROFILE
 const getPublicProfile = async (req, res) => {
   try {
-    const profileUser = await User.findById(req.params.userId)
-      .select("-password -email")
+    const profileUser = await User.findOne({
+      _id: req.params.userId,
+      isVerified: true,
+    })
+      .select("_id name role sport team profilePic bio achievements createdAt")
       .populate("team", "name");
-
     if (!profileUser) {
       return res.status(404).json({ message: "User not found" });
     }

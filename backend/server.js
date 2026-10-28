@@ -6,7 +6,10 @@ const dns = require("dns");
 const http = require("http");
 const { Server } = require("socket.io");
 
-if (process.env.NODE_ENV !== "production") {
+if (
+  process.env.LOCAL_TEST_MODE !== "1" &&
+  process.env.NODE_ENV !== "production"
+) {
   require("dotenv").config();
 }
 
@@ -51,50 +54,67 @@ const teamRoutes = require("./routes/teamRoutes");
 app.use("/api/teams", teamRoutes);
 
 //socket.io
+// Authenticated real-time chat and notifications
 const Message = require("./models/Message");
+const {
+  authenticateSocket,
+  armExpiry,
+  canUseTeam,
+  emitTeamEvent,
+} = require("./utils/socketAccess");
+
+io.use((socket, next) => {
+  const origin = socket.handshake.headers.origin;
+  if (origin && !allowedOrigins.includes(origin)) {
+    return next(new Error("Origin not allowed"));
+  }
+  cookieParser()(socket.request, {}, (cookieError) => {
+    if (cookieError) return next(new Error("Authentication required"));
+    authenticateSocket(socket).then(
+      () => next(),
+      () => next(new Error("Authentication required")),
+    );
+  });
+});
 
 io.on("connection", (socket) => {
-  console.log("User connected:", socket.id);
+  socket.join(socket.data.userId);
+  armExpiry(socket);
 
-  socket.on("joinTeam", (teamId) => {
-    socket.join(teamId);
-    console.log(`Socket ${socket.id} joined team ${teamId}`);
-  });
-
+  // Kept for compatibility with the existing frontend, but never trusts its ID.
   socket.on("joinUser", (userId) => {
-    socket.join(userId);
-    console.log(`Socket ${socket.id} joined personal room ${userId}`);
+    if (userId === socket.data.userId) socket.join(socket.data.userId);
   });
 
-  //users joins their team's chat room
-  socket.on("joinTeam", (teamId) => {
-    socket.join(teamId);
-    console.log(`Socket ${socket.id} joined team ${teamId}`);
-  });
-
-  //listen for new meassages
-  socket.on("sendMessage", async ({ teamId, senderId, text }) => {
+  socket.on("joinTeam", async (teamId) => {
     try {
-      const message = await Message.create({
-        team: teamId,
-        sender: senderId,
-        text,
-      });
-
-      const populatedMessage = await message.populate(
-        "sender",
-        "name profilePic",
-      );
-
-      //send to everyone in that team's room (including sender)
-      io.to(teamId).emit("receiveMessage", populatedMessage);
-    } catch (err) {
-      console.error("Error saving message:", err);
+      if (!(await canUseTeam(socket, teamId))) {
+        if (typeof teamId === "string") await socket.leave(teamId);
+        return;
+      }
+      await socket.join(teamId);
+    } catch {
+      socket.emit("chatError", { message: "Unable to join team chat" });
     }
   });
 
-  socket.on("disconnect", () => {
-    console.log("User Disconnected:", socket.id);
+  socket.on("sendMessage", async (payload) => {
+    try {
+      if (!payload || typeof payload !== "object") return;
+      const { teamId, text } = payload;
+      if (typeof text !== "string" || !text.trim()) return;
+      if (!(await canUseTeam(socket, teamId))) return;
+
+      const message = await Message.create({
+        team: teamId,
+        sender: socket.data.userId,
+        text: text.trim(),
+      });
+      const populated = await message.populate("sender", "name profilePic");
+      await emitTeamEvent(io, teamId, "receiveMessage", populated);
+    } catch {
+      socket.emit("chatError", { message: "Unable to send message" });
+    }
   });
 });
 
@@ -117,12 +137,12 @@ app.use("/api/foods", foodRoutes);
 app.get("/debug", (req, res) => {
   const config = {
     nodeEnv: process.env.NODE_ENV,
-    mongoUri: process.env.MONGODB_URI ? "✅ SET" : "❌ NOT SET",
-    jwtSecret: process.env.JWT_SECRET ? "✅ SET" : "❌ NOT SET",
-    brevoApiKey: process.env.BREVO_API_KEY ? "✅ SET" : "❌ NOT SET",
-    brevoSenderEmail: process.env.BREVO_SENDER_EMAIL || "❌ NOT SET",
-    brevoUser: process.env.BREVO_USER ? "✅ SET" : "❌ NOT SET",
-    brevoPass: process.env.BREVO_PASS ? "✅ SET" : "❌ NOT SET",
+    mongoUri: process.env.MONGODB_URI ? "SET" : "NOT SET",
+    jwtSecret: process.env.JWT_SECRET ? "SET" : "NOT SET",
+    brevoApiKey: process.env.BREVO_API_KEY ? "SET" : "NOT SET",
+    brevoSenderEmail: process.env.BREVO_SENDER_EMAIL || "NOT SET",
+    brevoUser: process.env.BREVO_USER ? "SET" : "NOT SET",
+    brevoPass: process.env.BREVO_PASS ? "SET" : "NOT SET",
   };
   res.json(config);
 });
