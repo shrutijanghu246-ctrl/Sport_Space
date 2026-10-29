@@ -1,12 +1,12 @@
 const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const crypto = require("crypto");
 const sendOTPEmail = require("../utils/sendEmail");
 const { endSocketSession } = require("../utils/socketAccess");
 
 // helper to generate OTP
-const generateOTP = () =>
-  Math.floor(100000 + Math.random() * 900000).toString();
+const generateOTP = () => crypto.randomInt(100000, 1000000).toString();
 
 // REGISTER
 const register = async (req, res) => {
