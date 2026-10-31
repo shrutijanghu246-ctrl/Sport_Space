@@ -50,6 +50,7 @@ const userSchema = new mongoose.Schema(
     otp: {
       code: String,
       expiresAt: Date,
+      attempts: { type: Number, default: 0 },
     },
     gender: {
       type: String,
