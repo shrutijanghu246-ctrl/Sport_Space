@@ -12,10 +12,14 @@ const generateOTP = () => crypto.randomInt(100000, 1000000).toString();
 // REGISTER
 const register = async (req, res) => {
   try {
-    const { name, email, password, role, sport } = req.body;
+    const { name, email, password, role, sport, gender } = req.body;
     const allowedRoles = ["member", "captain", "vice_captain", "coach"];
     if (role !== undefined && !allowedRoles.includes(role)) {
       return res.status(400).json({ message: "Invalid registration role" });
+    }
+
+    if (gender !== undefined && !["male", "female"].includes(gender)) {
+      return res.status(400).json({ message: "Invalid gender" });
     }
 
     const existingUser = await User.findOne({ email });
@@ -35,6 +39,7 @@ const register = async (req, res) => {
       password: hashedPassword,
       role,
       sport,
+      gender,
       isVerified: false,
       otp: { code: otp, expiresAt: otpExpiresAt, lastSentAt: new Date() },
     });
