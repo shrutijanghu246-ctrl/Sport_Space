@@ -244,6 +244,7 @@ const verifyOTP = async (req, res) => {
         message: "Email verified successfully!",
         user: {
           id: verifiedUser._id,
+          _id: verifiedUser._id,
           name: verifiedUser.name,
           email: verifiedUser.email,
           role: verifiedUser.role,
