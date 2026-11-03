@@ -36,7 +36,7 @@ const register = async (req, res) => {
       role,
       sport,
       isVerified: false,
-      otp: { code: otp, expiresAt: otpExpiresAt },
+      otp: { code: otp, expiresAt: otpExpiresAt, lastSentAt: new Date() },
     });
 
     console.log("User created in DB:", user._id);
@@ -281,30 +281,81 @@ const verifyOTP = async (req, res) => {
 };
 
 // RESEND OTP
+const RESEND_COOLDOWN_MS = 60 * 1000;
+
 const resendOTP = async (req, res) => {
   try {
     console.log("🔄 Resend OTP request");
     const { userId } = req.body;
 
-    const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    if (user.isVerified) {
-      return res.status(400).json({ message: "User already verified" });
+    if (!mongoose.isObjectIdOrHexString(userId)) {
+      return res.status(400).json({ message: "Invalid user id" });
     }
 
     const otp = generateOTP();
-    user.otp = {
-      code: otp,
-      expiresAt: new Date(Date.now() + 10 * 60 * 1000),
-    };
-    await user.save();
 
-    console.log("📧 Resending OTP to:", user.email);
+    // One atomic database decision, like verifyOTP: same account, still
+    // unverified, and either no OTP was ever sent or the last one went out
+    // at least a minute ago on the database server's own clock ($$NOW).
+    // Two resends at the same moment cannot both win, and a resend can
+    // never land on an account that verified in the meantime.
+    const updated = await User.findOneAndUpdate(
+      {
+        _id: userId,
+        isVerified: false,
+        $or: [
+          { "otp.lastSentAt": { $exists: false } },
+          {
+            $expr: {
+              $lte: [
+                "$otp.lastSentAt",
+                { $subtract: ["$$NOW", RESEND_COOLDOWN_MS] },
+              ],
+            },
+          },
+        ],
+      },
+      {
+        $set: {
+          "otp.code": otp,
+          "otp.expiresAt": new Date(Date.now() + 10 * 60 * 1000),
+          "otp.attempts": 0,
+        },
+        // the sent time is stamped by the database server's own clock -
+        // the same clock the cooldown check above compares against
+        $currentDate: { "otp.lastSentAt": true },
+      },
+      { returnDocument: "after" },
+    );
+
+    if (!updated) {
+      // The database refused - re-read only to give the honest reason.
+      const again = await User.findById(userId).select("isVerified otp").lean();
+      if (!again) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      if (again.isVerified) {
+        return res.status(400).json({ message: "User already verified" });
+      }
+      // The only other reason the update was refused: a code went out less
+      // than a minute ago. That code stays valid - nothing was changed.
+      const lastSentAt = again.otp && again.otp.lastSentAt;
+      const waitSeconds = lastSentAt
+        ? Math.max(
+            1,
+            Math.ceil(
+              (lastSentAt.getTime() + RESEND_COOLDOWN_MS - Date.now()) / 1000,
+            ),
+          )
+        : 60;
+      return res.status(429).json({
+        message: `Please wait ${waitSeconds} seconds before requesting a new OTP.`,
+      });
+    }
+
+    console.log("📧 Resending OTP to:", updated.email);
     try {
-      await sendOTPEmail(user.email, otp);
+      await sendOTPEmail(updated.email, otp);
       console.log("✅ Resend OTP email sent successfully!");
     } catch (emailErr) {
       console.error("❌ CRITICAL: Resend email failed:", emailErr.message);
@@ -313,7 +364,7 @@ const resendOTP = async (req, res) => {
     res.status(200).json({ message: "OTP resent successfully!" });
   } catch (err) {
     console.error("RESEND OTP ERROR:", err.message);
-    res.status(500).json({ message: "Server error", error: err.message });
+    res.status(500).json({ message: "Server error" });
   }
 };
 
