@@ -9,13 +9,44 @@ import styles from "./Dashboard.module.css";
 import { formatRole } from "../utils/formatRole";
 
 function Dashboard() {
-  const { user } = useAuth();
+  const { user, login } = useAuth();
   const navigate = useNavigate();
   const [posts, setPosts] = useState([]);
   const [achievements, setAchievements] = useState([]);
   const [postsError, setPostsError] = useState(false);
   const [achError, setAchError] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [genderChoice, setGenderChoice] = useState("");
+  const [genderSaving, setGenderSaving] = useState(false);
+  const [genderMsg, setGenderMsg] = useState("");
+
+  const saveGender = async () => {
+    setGenderMsg("");
+    setGenderSaving(true);
+    try {
+      const res = await axiosInstance.patch("/auth/me", {
+        gender: genderChoice,
+      });
+      login(res.data.user);
+    } catch (err) {
+      if (
+        err.response?.data?.message ===
+        "Gender is already saved on this account"
+      ) {
+        // Another tab or device saved it first.
+        try {
+          const me = await axiosInstance.get("/auth/me");
+          login(me.data.user);
+        } catch {
+          setGenderMsg("Gender is already saved. Refresh the page.");
+        }
+      } else {
+        setGenderMsg(err.response?.data?.message || "Could not save gender");
+      }
+    } finally {
+      setGenderSaving(false);
+    }
+  };
 
   const fetchLatest = async () => {
     // allSettled: each request succeeds or fails on its own
@@ -68,6 +99,30 @@ function Dashboard() {
           <Medal size={64} color="#f59e0b" strokeWidth={1.5} />
         </div>
       </div>
+
+      {!user?.gender && (
+        <div className={styles.welcomeCard}>
+          <div className={styles.welcomeText}>
+            <p style={{ textTransform: "none" }}>Pick your gender.</p>
+            <select
+              value={genderChoice}
+              onChange={(e) => setGenderChoice(e.target.value)}
+              disabled={genderSaving}
+            >
+              <option value="">Select Gender</option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+            </select>
+            <button
+              onClick={saveGender}
+              disabled={!genderChoice || genderSaving}
+            >
+              {genderSaving ? "Saving..." : "Save"}
+            </button>
+            {genderMsg && <p style={{ textTransform: "none" }}>{genderMsg}</p>}
+          </div>
+        </div>
+      )}
 
       {!user?.team ? (
         <NoTeam message="Join a team to see its latest posts and achievements here." />
