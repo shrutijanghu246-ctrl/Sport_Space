@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const {
+  updateGender,
   register,
   login,
   logout,
@@ -16,6 +17,7 @@ router.get("/me", isLoggedIn, (req, res) => {
   res.status(200).json({ user: req.user });
 });
 
+router.patch("/me", isLoggedIn, updateGender);
 router.post("/register", register);
 router.post("/login", login);
 router.post("/logout", logout);

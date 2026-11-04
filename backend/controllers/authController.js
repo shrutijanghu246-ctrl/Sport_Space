@@ -9,6 +9,44 @@ const mongoose = require("mongoose");
 // helper to generate OTP
 const generateOTP = () => crypto.randomInt(100000, 1000000).toString();
 
+// SAVE OWN GENDER (only when it is missing)
+const updateGender = async (req, res) => {
+  try {
+    const { gender } = req.body;
+    if (!["male", "female"].includes(gender)) {
+      return res.status(400).json({ message: "Invalid gender" });
+    }
+
+    const user = await User.findOneAndUpdate(
+      { _id: req.user._id, gender: null },
+      { $set: { gender } },
+      { new: true, runValidators: true },
+    );
+
+    if (!user) {
+      return res
+        .status(400)
+        .json({ message: "Gender is already saved on this account" });
+    }
+
+    res.status(200).json({
+      message: "Gender saved",
+      user: {
+        id: user._id,
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        sport: user.sport,
+        team: user.team,
+        gender: user.gender,
+      },
+    });
+  } catch (err) {
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
 // REGISTER
 const register = async (req, res) => {
   try {
@@ -439,6 +477,7 @@ const getPublicProfile = async (req, res) => {
 
 module.exports = {
   register,
+  updateGender,
   login,
   logout,
   verifyOTP,
