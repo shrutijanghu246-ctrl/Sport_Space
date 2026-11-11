@@ -4,7 +4,7 @@ import axiosInstance from "../utils/axios";
 import { useAuth } from "../context/AuthContext";
 import PostCard from "../components/PostCard";
 import NoTeam from "../components/NoTeam";
-import { Medal, Trophy, Newspaper } from "lucide-react";
+import { Medal, Trophy, Newspaper, User } from "lucide-react";
 import styles from "./Dashboard.module.css";
 import { formatRole } from "../utils/formatRole";
 
@@ -101,10 +101,17 @@ function Dashboard() {
       </div>
 
       {!user?.gender && (
-        <div className={styles.welcomeCard}>
-          <div className={styles.welcomeText}>
-            <p style={{ textTransform: "none" }}>Pick your gender.</p>
+        <div className={styles.genderCard}>
+          <div className={styles.genderInfo}>
+            <div className={styles.genderIcon}>
+              <User size={20} />
+            </div>
+            <p className={styles.genderText}>Pick your gender.</p>
+          </div>
+          <div className={styles.genderControls}>
             <select
+              className={styles.genderSelect}
+              aria-label="Gender"
               value={genderChoice}
               onChange={(e) => setGenderChoice(e.target.value)}
               disabled={genderSaving}
@@ -114,13 +121,14 @@ function Dashboard() {
               <option value="female">Female</option>
             </select>
             <button
+              className={styles.genderSave}
               onClick={saveGender}
               disabled={!genderChoice || genderSaving}
             >
               {genderSaving ? "Saving..." : "Save"}
             </button>
-            {genderMsg && <p style={{ textTransform: "none" }}>{genderMsg}</p>}
           </div>
+          {genderMsg && <p className={styles.genderMsg}>{genderMsg}</p>}
         </div>
       )}
 
