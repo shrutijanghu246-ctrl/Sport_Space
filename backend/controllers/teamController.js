@@ -34,6 +34,15 @@ const createTeamAndJoin = async (req, res) => {
       return res.status(400).json({ message: "Team already exists" });
     }
 
+    if (
+      req.user.role === "captain" &&
+      !["male", "female"].includes(req.user.gender)
+    ) {
+      return res.status(400).json({
+        message: "Save your gender before creating a team as captain",
+      });
+    }
+
     const isCoach = req.user.role === "coach";
 
     const team = await Team.create({
