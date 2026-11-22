@@ -43,6 +43,12 @@ const createTeamAndJoin = async (req, res) => {
       });
     }
 
+    if (req.user.team) {
+      return res
+        .status(409)
+        .json({ message: "Leave your current team before creating another" });
+    }
+
     const isCoach = req.user.role === "coach";
 
     const team = await Team.create({
