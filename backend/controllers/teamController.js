@@ -181,6 +181,15 @@ const joinTeam = async (req, res) => {
       return res.status(400).json({ message: "Already a member!" });
     }
 
+    if (
+      req.user.role === "captain" &&
+      !["male", "female"].includes(req.user.gender)
+    ) {
+      return res
+        .status(400)
+        .json({ message: "Save your gender before joining as captain" });
+    }
+
     //handle captain assignment
     if (req.user.role === "captain") {
       if (req.user.gender === "female") {
