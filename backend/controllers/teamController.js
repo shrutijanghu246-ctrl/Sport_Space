@@ -190,6 +190,12 @@ const joinTeam = async (req, res) => {
       return res.status(400).json({ message: "Already a member!" });
     }
 
+    if (req.user.team && req.user.team.toString() !== team._id.toString()) {
+      return res
+        .status(409)
+        .json({ message: "Leave your current team before joining another" });
+    }
+
     if (
       req.user.role === "captain" &&
       !["male", "female"].includes(req.user.gender)
