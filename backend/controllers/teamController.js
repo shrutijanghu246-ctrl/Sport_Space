@@ -169,6 +169,10 @@ const removeMember = async (req, res) => {
         .json({ message: "You can only manage your own team" });
     }
 
+    if (!team.members.some((member) => member.toString() === userId)) {
+      return res.status(404).json({ message: "User is not in this team" });
+    }
+
     team.members = team.members.filter(
       (member) => member.toString() !== userId,
     );
