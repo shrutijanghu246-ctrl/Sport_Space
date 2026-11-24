@@ -139,6 +139,13 @@ const addMember = async (req, res) => {
       return res.status(400).json({ message: "User already in team" });
     }
 
+    const user = await User.findById(userId);
+    if (user.team) {
+      return res
+        .status(409)
+        .json({ message: "User already belongs to a team" });
+    }
+
     team.members.push(userId);
     await team.save();
 
