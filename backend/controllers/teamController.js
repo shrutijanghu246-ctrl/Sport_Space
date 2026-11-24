@@ -140,6 +140,9 @@ const addMember = async (req, res) => {
     }
 
     const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
     if (user.team) {
       return res
         .status(409)
