@@ -183,6 +183,11 @@ const removeMember = async (req, res) => {
       return res.status(404).json({ message: "User is not in this team" });
     }
 
+    for (const slot of ["boys", "girls"]) {
+      if (team.captain?.[slot]?.toString() === userId)
+        team.captain[slot] = null;
+    }
+    if (team.coach?.toString() === userId) team.coach = null;
     team.members = team.members.filter(
       (member) => member.toString() !== userId,
     );
