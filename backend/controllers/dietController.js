@@ -4,6 +4,9 @@ const User = require("../models/User");
 //log diet (athlete logs their own diet)
 const createDietLog = async (req, res) => {
   try {
+    if (!req.user.team) {
+      return res.status(403).json({ message: "You need to join a team first" });
+    }
     const { date, meals, notes } = req.body;
 
     const totalCalories = meals.reduce(

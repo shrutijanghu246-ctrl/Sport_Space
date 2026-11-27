@@ -3,6 +3,9 @@ const Exercise = require("../models/Exercise");
 //add exercise(coach/captain only)
 const addExercise = async (req, res) => {
   try {
+    if (!req.user.team) {
+      return res.status(403).json({ message: "You need to join a team first" });
+    }
     const {
       name,
       sport,

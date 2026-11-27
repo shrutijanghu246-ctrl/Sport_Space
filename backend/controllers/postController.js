@@ -6,6 +6,9 @@ const { emitUserEvent } = require("../utils/socketAccess");
 //create post or log
 const createPost = async (req, res) => {
   try {
+    if (!req.user.team) {
+      return res.status(403).json({ message: "You need to join a team first" });
+    }
     const { type, content, isPublic, logDetails } = req.body;
 
     const postIsPublic = type === "log" ? false : isPublic;
