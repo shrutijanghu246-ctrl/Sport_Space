@@ -104,7 +104,7 @@ const getTeam = async (req, res) => {
       .populate("captain.boys", "name sport profilePic")
       .populate("captain.girls", "name sport profilePic")
       .populate("coach", "name profilePic")
-      .populate("members", "name sport profilePic");
+      .populate("members", "name sport profilePic role");
 
     if (!team) {
       console.log("Team not found:", req.params.id);
