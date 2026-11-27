@@ -8,6 +8,7 @@ const mongoose = require("mongoose");
 
 // helper to generate OTP
 const generateOTP = () => crypto.randomInt(100000, 1000000).toString();
+const dummyHash = bcrypt.hash("dummy-not-an-account-password", 10);
 
 // SAVE OWN GENDER (only when it is missing)
 const updateGender = async (req, res) => {
@@ -115,23 +116,28 @@ const register = async (req, res) => {
 // LOGIN
 const login = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { password } = req.body;
+    const email =
+      typeof req.body.email === "string"
+        ? req.body.email.trim().toLowerCase()
+        : "";
 
     const user = await User.findOne({ email });
     if (!user) {
+      await bcrypt.compare(password, await dummyHash);
       return res.status(400).json({ message: "Invalid credentials" });
-    }
-
-    if (user.isVerified === false) {
-      return res.status(400).json({
-        message: "Please verify your email first",
-        userId: user._id,
-      });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(400).json({ message: "Invalid credentials" });
+    }
+
+    if (user.isVerified !== true) {
+      return res.status(400).json({
+        message: "Please verify your email first",
+        userId: user._id,
+      });
     }
 
     const token = jwt.sign(
