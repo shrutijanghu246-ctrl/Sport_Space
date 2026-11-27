@@ -342,14 +342,26 @@ const verifyOTP = async (req, res) => {
 
 // RESEND OTP
 const RESEND_COOLDOWN_MS = 60 * 1000;
+const MAX_OTP_SENDS_PER_WINDOW = 5;
 
 const resendOTP = async (req, res) => {
   try {
-    console.log("🔄 Resend OTP request");
+    console.log("Resend OTP request");
     const { userId } = req.body;
 
     if (!mongoose.isObjectIdOrHexString(userId)) {
       return res.status(400).json({ message: "Invalid user id" });
+    }
+
+    const current = await User.findById(userId).select("otp").lean();
+    const windowActive =
+      current?.otp?.expiresAt && current.otp.expiresAt.getTime() > Date.now();
+    const sentCount = windowActive ? (current.otp.sentCount ?? 1) : 0;
+    if (sentCount >= MAX_OTP_SENDS_PER_WINDOW) {
+      return res.status(429).json({
+        message:
+          "Too many OTP requests. Please use the latest code or try again after it expires.",
+      });
     }
 
     const otp = generateOTP();
@@ -377,6 +389,7 @@ const resendOTP = async (req, res) => {
       },
       {
         $set: {
+          "otp.sentCount": sentCount + 1,
           "otp.code": otp,
           "otp.expiresAt": new Date(Date.now() + 10 * 60 * 1000),
           "otp.attempts": 0,
