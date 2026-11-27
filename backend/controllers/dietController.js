@@ -1,4 +1,5 @@
 const DietLog = require("../models/DietLog");
+const User = require("../models/User");
 
 //log diet (athlete logs their own diet)
 const createDietLog = async (req, res) => {
@@ -42,6 +43,18 @@ const getMyDietLogs = async (req, res) => {
 //get team memeber's diet logs(captain/coach only)
 const getMemberDietLogs = async (req, res) => {
   try {
+    const athlete = await User.findById(req.params.athleteId).select("team");
+    if (!athlete) {
+      return res.status(404).json({ message: "Athlete not found" });
+    }
+    if (
+      req.user.role !== "admin" &&
+      String(athlete.team) !== String(req.user.team)
+    ) {
+      return res
+        .status(403)
+        .json({ message: "You can only view your own team's diet logs" });
+    }
     const logs = await DietLog.find({ athlete: req.params.athleteId })
       .populate("athlete", "name sport profilePic")
       .sort({ date: -1 })
