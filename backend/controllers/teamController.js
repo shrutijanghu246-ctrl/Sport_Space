@@ -1,6 +1,7 @@
 const Team = require("../models/Team");
 const User = require("../models/User");
 const { evictUserTeamSockets } = require("../utils/socketAccess");
+const jwt = require("jsonwebtoken");
 
 const belongsToTeam = (user, team) =>
   user.role === "admin" || user.team?.toString() === team._id.toString();
@@ -82,9 +83,9 @@ const createTeamAndJoin = async (req, res) => {
 const getAllTeams = async (req, res) => {
   try {
     const teams = await Team.find()
-      .populate("captain.boys", "name email sport")
-      .populate("captain.girls", "name email sport")
-      .populate("coach", "name email")
+      .populate("captain.boys", "name sport")
+      .populate("captain.girls", "name sport")
+      .populate("coach", "name")
       .select("-members"); //don't expose member list publicly
 
     console.log("Teams fetched:", teams.length, "teams");
@@ -111,7 +112,23 @@ const getTeam = async (req, res) => {
     }
 
     console.log("Team fetched:", team.name);
-    res.status(200).json({ team });
+    let viewer = null;
+    try {
+      const decoded = jwt.verify(req.cookies?.token, process.env.JWT_SECRET);
+      viewer = await User.findById(decoded.id).select("role team");
+    } catch {
+      viewer = null;
+    }
+
+    const responseTeam = team.toObject();
+    responseTeam.memberCount = team.members.length;
+    if (
+      !viewer ||
+      (viewer.role !== "admin" && String(viewer.team) !== String(team._id))
+    ) {
+      delete responseTeam.members;
+    }
+    res.status(200).json({ team: responseTeam });
   } catch (err) {
     console.error("GET TEAM ERROR:", err.message, err.stack);
     res.status(500).json({ message: "Server error", error: err.message });
