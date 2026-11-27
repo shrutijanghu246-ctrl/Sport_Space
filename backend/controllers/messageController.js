@@ -5,7 +5,6 @@ const getTeamMessages = async (req, res) => {
   try {
     const messages = await Message.find({
       team: req.params.teamId,
-      deletedForEveryone: false, //hide deleted for everyone
       deletedFor: { $nin: [req.user._id] }, //hide deleted for me
     })
       .populate("sender", "name profilePic")
@@ -20,12 +19,12 @@ const getTeamMessages = async (req, res) => {
 //delete for me
 const deleteForMe = async (req, res) => {
   try {
-    const message = await Message.findById(req.params.id);
-    if (!message) return res.status(404).json({ message: "Message not found" });
-
-    if (!message.deletedFor.includes(req.user._id)) {
-      message.deletedFor.push(req.user._id);
-      await message.save();
+    const result = await Message.updateOne(
+      { _id: req.params.id },
+      { $addToSet: { deletedFor: req.user._id } },
+    );
+    if (result.matchedCount === 0) {
+      return res.status(404).json({ message: "Message not found" });
     }
 
     res.status(200).json({ message: "Deleted for you" });
