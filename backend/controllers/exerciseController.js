@@ -63,6 +63,15 @@ const deleteExercise = async (req, res) => {
       return res.status(404).json({ message: "Exercise not found" });
     }
 
+    if (
+      req.user.role !== "admin" &&
+      String(exercise.team) !== String(req.user.team)
+    ) {
+      return res
+        .status(403)
+        .json({ message: "You can only delete your own team's exercises" });
+    }
+
     await exercise.deleteOne();
     res.status(200).json({ message: "Exercise deleted!" });
   } catch (err) {
