@@ -60,6 +60,16 @@ const register = async (req, res) => {
       return res.status(400).json({ message: "Invalid gender" });
     }
 
+    if (
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ||
+      typeof password !== "string" ||
+      password.length < 6
+    ) {
+      return res.status(400).json({
+        message: "Provide a valid email and password of at least 6 characters",
+      });
+    }
+
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ message: "Email already registered" });
