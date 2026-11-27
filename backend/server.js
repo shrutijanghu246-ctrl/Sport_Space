@@ -103,6 +103,11 @@ io.on("connection", (socket) => {
       if (!payload || typeof payload !== "object") return;
       const { teamId, text } = payload;
       if (typeof text !== "string" || !text.trim()) return;
+      if (text.length > 2000) {
+        return socket.emit("chatError", {
+          message: "Message is too long (max 2000 characters).",
+        });
+      }
       if (!(await canUseTeam(socket, teamId))) return;
 
       const message = await Message.create({
@@ -112,6 +117,7 @@ io.on("connection", (socket) => {
       });
       const populated = await message.populate("sender", "name profilePic");
       await emitTeamEvent(io, teamId, "receiveMessage", populated);
+      socket.emit("messageSaved", populated._id);
     } catch {
       socket.emit("chatError", { message: "Unable to send message" });
     }
