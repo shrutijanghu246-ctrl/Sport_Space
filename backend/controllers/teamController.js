@@ -193,7 +193,10 @@ const removeMember = async (req, res) => {
     );
     await team.save();
 
-    await User.findByIdAndUpdate(userId, { team: null });
+    await User.updateOne(
+      { _id: userId, team: team._id },
+      { $set: { team: null } },
+    );
     await evictUserTeamSockets(req.app.get("io"), userId);
 
     res.status(200).json({ message: "Member removed successfully" });
