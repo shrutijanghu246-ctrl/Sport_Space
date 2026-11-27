@@ -64,6 +64,12 @@ const createPost = async (req, res) => {
 //get team feed (members only - shows both posts and logs)
 const getTeamFeed = async (req, res) => {
   try {
+    if (String(req.user.team) !== req.params.teamId) {
+      return res
+        .status(403)
+        .json({ message: "You are not a member of this team" });
+    }
+
     console.log("📋 Fetching team feed for teamId:", req.params.teamId);
     const posts = await Post.find({ team: req.params.teamId })
       .populate("author", "name profilePic sport")
