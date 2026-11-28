@@ -13,7 +13,12 @@ if (
 }
 
 const connectDB = require("./config/db");
-connectDB();
+
+// Some networks refuse SRV lookups on their default DNS, which breaks the
+// Atlas connection; opt in to public resolvers by setting DNS_FALLBACK=1 in .env
+if (process.env.DNS_FALLBACK === "1") {
+  require("dns").setServers(["8.8.8.8", "1.1.1.1"]);
+}
 
 const app = express();
 const server = http.createServer(app);
@@ -144,6 +149,12 @@ app.use((err, req, res, next) => {
 });
 
 const PORT = process.env.PORT || 8080;
-server.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+
+if (require.main === module) {
+  connectDB();
+  server.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+  });
+}
+
+module.exports = { app, server, io };
