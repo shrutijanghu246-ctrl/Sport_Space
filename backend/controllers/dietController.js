@@ -9,6 +9,19 @@ const createDietLog = async (req, res) => {
     }
     const { date, meals, notes } = req.body;
 
+    for (const meal of meals) {
+      for (const field of ["calories", "protein", "carbs", "fats"]) {
+        if (meal[field] === undefined || meal[field] === null) continue;
+        const value = Number(meal[field]);
+        if (!Number.isFinite(value) || value < 0) {
+          return res.status(400).json({
+            message: "Nutrient values must be valid non-negative numbers",
+          });
+        }
+        meal[field] = value;
+      }
+    }
+
     const totalCalories = meals.reduce(
       (sum, meal) => sum + (meal.calories || 0),
       0,
