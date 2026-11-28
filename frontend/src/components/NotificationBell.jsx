@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import axiosInstance from "../utils/axios";
 import { useSocket } from "../context/SocketContext";
 import { useNavigate } from "react-router-dom";
@@ -10,9 +10,13 @@ function NotificationBell() {
   const socket = useSocket();
   const navigate = useNavigate();
 
+  const notifReqRef = useRef(0);
+
   const fetchNotifications = async () => {
+    const requestId = ++notifReqRef.current;
     try {
       const res = await axiosInstance.get("/notifications");
+      if (requestId !== notifReqRef.current) return;
       setNotifications(res.data.notifications);
     } catch (err) {
       console.error(err);

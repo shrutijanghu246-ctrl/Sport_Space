@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import axiosInstance from "../utils/axios";
 import { useAuth } from "../context/AuthContext";
 import { Trophy, Medal, Plus, Trash2 } from "lucide-react";
@@ -19,10 +19,14 @@ function Achievements() {
   const isPrivileged = ["captain", "admin", "vice_captain", "coach"].includes(
     user?.role,
   );
+  const teamAchReqRef = useRef(0);
+  const personalAchReqRef = useRef(0);
 
   const fetchTeamAchievements = async () => {
+    const requestId = ++teamAchReqRef.current;
     try {
       const res = await axiosInstance.get(`/teams/${user.team}`);
+      if (requestId !== teamAchReqRef.current) return;
       setTeamAchievements(res.data.team.achievements);
     } catch (err) {
       console.error(err);
@@ -30,8 +34,10 @@ function Achievements() {
   };
 
   const fetchPersonalAchievements = async () => {
+    const requestId = ++personalAchReqRef.current;
     try {
       const res = await axiosInstance.get("/auth/me");
+      if (requestId !== personalAchReqRef.current) return;
       setPersonalAchievements(res.data.user.achievements);
     } catch (err) {
       console.error(err);

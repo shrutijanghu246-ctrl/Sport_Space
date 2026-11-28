@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import axiosInstance from "../utils/axios";
 import { useAuth } from "../context/AuthContext";
 import PostCard from "../components/PostCard";
@@ -19,18 +19,20 @@ function Feed() {
     duration: "",
     personalNote: "",
   });
+  const feedReqRef = useRef(0);
 
   const fetchFeed = async () => {
+    const requestId = ++feedReqRef.current;
     try {
       const res = await axiosInstance.get(`/posts/team/${user.team}`);
+      if (requestId !== feedReqRef.current) return;
       setPosts(res.data.posts);
     } catch (err) {
       console.error(err);
     } finally {
-      setLoading(false);
+      if (requestId === feedReqRef.current) setLoading(false);
     }
   };
-
   useEffect(() => {
     if (user?.team) fetchFeed();
   }, [user?.team]);

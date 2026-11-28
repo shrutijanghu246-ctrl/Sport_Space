@@ -22,9 +22,12 @@ function DietTracker() {
   const [activeMealIndex, setActiveMealIndex] = useState(null);
   const searchIdRef = useRef(0);
 
+  const logsReqRef = useRef(0);
   const fetchLogs = async () => {
+    const requestId = ++logsReqRef.current;
     try {
       const res = await axiosInstance.get("/diet/my");
+      if (requestId !== logsReqRef.current) return;
       setLogs(res.data.logs);
     } catch (err) {
       console.error(err);

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import axiosInstance from "../utils/axios";
 import { useAuth } from "../context/AuthContext";
 import { Dumbbell, Plus, Trash2, Search, X } from "lucide-react";
@@ -26,11 +26,14 @@ function Exercises() {
   const isPrivileged = ["captain", "coach", "admin", "vice_captain"].includes(
     user?.role,
   );
+  const exReqRef = useRef(0);
 
   const fetchExercises = async () => {
+    const requestId = ++exReqRef.current;
     try {
       const query = filterSport ? `?sport=${filterSport}` : "";
       const res = await axiosInstance.get(`/exercises${query}`);
+      if (requestId !== exReqRef.current) return;
       setExercises(res.data.exercises);
     } catch (err) {
       console.error(err);
