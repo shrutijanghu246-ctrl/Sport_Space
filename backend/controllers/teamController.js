@@ -1,7 +1,6 @@
 const Team = require("../models/Team");
 const User = require("../models/User");
 const { evictUserTeamSockets } = require("../utils/socketAccess");
-const jwt = require("jsonwebtoken");
 
 const belongsToTeam = (user, team) =>
   user.role === "admin" || user.team?.toString() === team._id.toString();
@@ -99,6 +98,7 @@ const getAllTeams = async (req, res) => {
 //get single team(public)
 const getTeam = async (req, res) => {
   try {
+    const jwt = require("jsonwebtoken");
     console.log("Fetching team:", req.params.id);
     const team = await Team.findById(req.params.id)
       .populate("captain.boys", "name sport profilePic")
