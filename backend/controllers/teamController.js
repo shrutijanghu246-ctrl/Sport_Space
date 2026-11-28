@@ -58,12 +58,14 @@ const createTeamAndJoin = async (req, res) => {
       members: [req.user._id],
       ...(isCoach
         ? { coach: req.user._id }
-        : {
-            captain: {
-              boys: req.user.gender === "male" ? req.user._id : null,
-              girls: req.user.gender === "female" ? req.user._id : null,
-            },
-          }),
+        : req.user.role === "captain"
+          ? {
+              captain: {
+                boys: req.user.gender === "male" ? req.user._id : null,
+                girls: req.user.gender === "female" ? req.user._id : null,
+              },
+            }
+          : {}),
     });
 
     await User.findByIdAndUpdate(req.user._id, { team: team._id });
