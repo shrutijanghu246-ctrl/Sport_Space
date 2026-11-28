@@ -445,6 +445,15 @@ const resendOTP = async (req, res) => {
 const addPersonalAchievement = async (req, res) => {
   try {
     const { title, date } = req.body;
+    if (
+      typeof title !== "string" ||
+      !title.trim() ||
+      Number.isNaN(Date.parse(date))
+    ) {
+      return res
+        .status(400)
+        .json({ message: "Title and a valid date are required" });
+    }
     const foundUser = await User.findById(req.user._id);
 
     foundUser.achievements.push({ title, date });
@@ -462,12 +471,13 @@ const addPersonalAchievement = async (req, res) => {
 // DELETE PERSONAL ACHIEVEMENT
 const deletePersonalAchievement = async (req, res) => {
   try {
-    const foundUser = await User.findById(req.user._id);
-
-    foundUser.achievements = foundUser.achievements.filter(
-      (a) => a._id.toString() !== req.params.achievementId,
+    const result = await User.updateOne(
+      { _id: req.user._id },
+      { $pull: { achievements: { _id: req.params.id } } },
     );
-    await foundUser.save();
+    if (result.modifiedCount === 0) {
+      return res.status(404).json({ message: "Achievement not found" });
+    }
 
     res.status(200).json({ message: "Achievement deleted!" });
   } catch (err) {
