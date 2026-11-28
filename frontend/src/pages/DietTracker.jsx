@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import axiosInstance from "../utils/axios";
 import { useAuth } from "../context/AuthContext";
 import { Salad, Plus, Trash2, Flame, Calendar, X } from "lucide-react";
@@ -9,13 +9,18 @@ function DietTracker() {
   const { user } = useAuth();
   const [logs, setLogs] = useState([]);
   const [showForm, setShowForm] = useState(false);
-  const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
+  const [date, setDate] = useState(
+    new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+      .toISOString()
+      .split("T")[0],
+  );
   const [meals, setMeals] = useState([
     { name: "", calories: "", protein: "", carbs: "", fats: "" },
   ]);
   const [notes, setNotes] = useState("");
   const [foodSuggestions, setFoodSuggestions] = useState([]);
   const [activeMealIndex, setActiveMealIndex] = useState(null);
+  const searchIdRef = useRef(0);
 
   const fetchLogs = async () => {
     try {
@@ -42,15 +47,18 @@ function DietTracker() {
       setFoodSuggestions([]);
       return;
     }
+    const searchId = ++searchIdRef.current;
     try {
-      const res = await axiosInstance.get(`/foods/search?query=${query}`);
+      const res = await axiosInstance.get(
+        `/foods/search?query=${encodeURIComponent(query)}`,
+      );
+      if (searchId !== searchIdRef.current) return;
       setFoodSuggestions(res.data.foods);
       setActiveMealIndex(index);
     } catch (err) {
       console.error(err);
     }
   };
-
   const selectFood = (food, index) => {
     const updated = [...meals];
     updated[index] = {
