@@ -1,5 +1,5 @@
 const Food = require("../models/Food");
-
+const escapeRegex = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 //search foods
 const searchFoods = async (req, res) => {
   try {
@@ -12,7 +12,7 @@ const searchFoods = async (req, res) => {
 
     console.log("🔍 Searching foods for:", query);
     const foods = await Food.find({
-      name: { $regex: query, $options: "i" }, //case insensitive search
+      name: { $regex: escapeRegex(query), $options: "i" }, //case insensitive search
     }).limit(10);
 
     console.log("✅ Found", foods.length, "foods for query:", query);
@@ -43,7 +43,7 @@ const addFood = async (req, res) => {
       req.body;
 
     const existing = await Food.findOne({
-      name: { $regex: `^${name}`, $options: "i" },
+      name: { $regex: `^${escapeRegex(name)}$`, $options: "i" },
     });
     if (existing) {
       return res.status(400).json({ message: "Food already exists" });
