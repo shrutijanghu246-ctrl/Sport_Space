@@ -26,8 +26,9 @@ const foodSchema = new mongoose.Schema(
     },
     category: {
       type: String,
-      ennum: [
+      enum: [
         "grain",
+        "fruit",
         "protein",
         "dairy",
         "vegetable",

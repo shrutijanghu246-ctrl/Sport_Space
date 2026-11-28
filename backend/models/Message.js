@@ -5,12 +5,12 @@ const messageSchema = new mongoose.Schema(
     team: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Team",
-      required: "true",
+      required: true,
     },
     sender: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      requireed: true,
+      required: true,
     },
     text: {
       type: String,
