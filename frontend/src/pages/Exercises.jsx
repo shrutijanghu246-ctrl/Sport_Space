@@ -282,15 +282,15 @@ function Exercises() {
 
               <p className={styles.description}>{ex.description}</p>
 
-              {(ex.sets || ex.reps || ex.duration) && (
+              {(ex.sets > 0 || ex.reps > 0 || ex.duration > 0) && (
                 <div className={styles.statsRow}>
-                  {ex.sets && (
+                  {ex.sets > 0 && (
                     <span className={styles.stat}>{ex.sets} sets</span>
                   )}
-                  {ex.reps && (
+                  {ex.reps > 0 && (
                     <span className={styles.stat}>{ex.reps} reps</span>
                   )}
-                  {ex.duration && (
+                  {ex.duration > 0 && (
                     <span className={styles.stat}>{ex.duration} mins</span>
                   )}
                 </div>
