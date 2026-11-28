@@ -135,6 +135,14 @@ app.use("/api/exercises", exerciseRoutes);
 const foodRoutes = require("./routes/foodRoutes");
 app.use("/api/foods", foodRoutes);
 
+// Malformed JSON bodies should answer 400, not fall into the default HTML 500
+app.use((err, req, res, next) => {
+  if (err && err.type === "entity.parse.failed") {
+    return res.status(400).json({ message: "Invalid JSON in request body" });
+  }
+  next(err);
+});
+
 const PORT = process.env.PORT || 8080;
 server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
