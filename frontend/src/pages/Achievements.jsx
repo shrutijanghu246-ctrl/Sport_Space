@@ -16,7 +16,7 @@ function Achievements() {
   });
   const [personalForm, setPersonalForm] = useState({ title: "", date: "" });
 
-  const isPrivileged = ["captain", "admin", "vice_captain"].includes(
+  const isPrivileged = ["captain", "admin", "vice_captain", "coach"].includes(
     user?.role,
   );
 
@@ -117,7 +117,7 @@ function Achievements() {
 
       {activeTab === "team" && (
         <div>
-          {isPrivileged && (
+          {isPrivileged && user?.team && (
             <div className={styles.form}>
               <p className={styles.formTitle}>
                 <Plus size={18} color="#f59e0b" />
