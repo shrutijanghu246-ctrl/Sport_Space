@@ -10,6 +10,13 @@ const mongoose = require("mongoose");
 const generateOTP = () => crypto.randomInt(100000, 1000000).toString();
 const dummyHash = bcrypt.hash("dummy-not-an-account-password", 10);
 
+// secure + sameSite:"none" only work over https; keep them for production
+const cookieOptions = {
+  httpOnly: true,
+  ...(process.env.NODE_ENV === "production"
+    ? { secure: true, sameSite: "none" }
+    : {}),
+};
 // SAVE OWN GENDER (only when it is missing)
 const updateGender = async (req, res) => {
   try {
@@ -147,10 +154,8 @@ const login = async (req, res) => {
     );
 
     res.cookie("token", token, {
-      httpOnly: true,
+      ...cookieOptions,
       maxAge: 7 * 24 * 60 * 60 * 1000,
-      secure: true,
-      sameSite: "none",
     });
 
     res.status(200).json({
@@ -174,11 +179,7 @@ const login = async (req, res) => {
 const logout = async (req, res) => {
   try {
     await endSocketSession(req.app.get("io"), req.cookies?.token);
-    res.clearCookie("token", {
-      httpOnly: true,
-      secure: true,
-      sameSite: "none",
-    });
+    res.clearCookie("token", cookieOptions);
     res.status(200).json({ message: "Logged out successfully" });
   } catch {
     res
@@ -293,10 +294,8 @@ const verifyOTP = async (req, res) => {
       );
 
       res.cookie("token", token, {
-        httpOnly: true,
+        ...cookieOptions,
         maxAge: 7 * 24 * 60 * 60 * 1000,
-        secure: true,
-        sameSite: "none",
       });
 
       return res.status(200).json({
