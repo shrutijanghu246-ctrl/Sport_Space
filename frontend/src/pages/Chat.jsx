@@ -4,6 +4,7 @@ import { useAuth } from "../context/AuthContext";
 import { useSocket } from "../context/SocketContext";
 import { MessageCircle, Send } from "lucide-react";
 import styles from "./Chat.module.css";
+import NoTeam from "../components/NoTeam";
 
 function Chat() {
   const { user } = useAuth();
@@ -111,6 +112,7 @@ function Chat() {
       console.error(err);
     }
   };
+  if (!user?.team) return <NoTeam message="Join a team to use team chat." />;
 
   return (
     <div className={styles.container}>

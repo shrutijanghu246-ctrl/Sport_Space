@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { Users, Crown, Trophy, Dumbbell } from "lucide-react";
 import styles from "./TeamPage.module.css";
 import { formatRole } from "../utils/formatRole";
+import NoTeam from "../components/NoTeam";
 
 function TeamPage() {
   const { user } = useAuth();
@@ -25,6 +26,7 @@ function TeamPage() {
     };
     if (user?.team) fetchTeam();
   }, [user?.team]);
+  if (!user?.team) return <NoTeam message="Join a team to view its page." />;
 
   if (loading) return <div className={styles.loading}>Loading team...</div>;
   if (!team) return <div className={styles.loading}>No team found!</div>;

@@ -3,6 +3,7 @@ import axiosInstance from "../utils/axios";
 import { useAuth } from "../context/AuthContext";
 import { Salad, Plus, Trash2, Flame, Calendar, X } from "lucide-react";
 import styles from "./DietTracker.module.css";
+import NoTeam from "../components/NoTeam";
 
 function DietTracker() {
   const { user } = useAuth();
@@ -95,6 +96,7 @@ function DietTracker() {
       console.error(err);
     }
   };
+  if (!user?.team) return <NoTeam message="Join a team to track your diet." />;
 
   return (
     <div className={styles.container}>

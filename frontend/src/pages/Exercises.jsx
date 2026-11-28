@@ -4,6 +4,7 @@ import { useAuth } from "../context/AuthContext";
 import { Dumbbell, Plus, Trash2, Search, X } from "lucide-react";
 import styles from "./Exercises.module.css";
 import { formatRole } from "../utils/formatRole";
+import NoTeam from "../components/NoTeam";
 
 function Exercises() {
   const { user } = useAuth();
@@ -87,6 +88,8 @@ function Exercises() {
     intermediate: { bg: "#fef3c7", color: "#d97706" },
     advanced: { bg: "#fef2f2", color: "#ef4444" },
   };
+  if (!user?.team)
+    return <NoTeam message="Join a team to see its exercises." />;
 
   return (
     <div className={styles.container}>
