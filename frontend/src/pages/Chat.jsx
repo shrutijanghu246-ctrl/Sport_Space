@@ -14,6 +14,8 @@ function Chat() {
   const [teamName, setTeamName] = useState("");
   const [selectedMessage, setSelectedMessage] = useState(null);
   const messagesEndRef = useRef(null);
+  const pendingDraftRef = useRef(null);
+  const [sendError, setSendError] = useState("");
 
   useEffect(() => {
     const fetchMessages = async () => {
@@ -42,7 +44,10 @@ function Chat() {
   useEffect(() => {
     if (!socket || !user?.team) return;
 
-    socket.emit("joinTeam", user.team);
+    // room membership dies with the connection, so rejoin on every reconnect
+    const joinTeamRoom = () => socket.emit("joinTeam", user.team);
+    joinTeamRoom();
+    socket.on("connect", joinTeamRoom);
 
     socket.on("receiveMessage", (newMessage) => {
       setMessages((prev) => [...prev, newMessage]);
@@ -62,9 +67,24 @@ function Chat() {
       );
     });
 
+    socket.on("messageSaved", () => {
+      pendingDraftRef.current = null;
+    });
+
+    socket.on("chatError", ({ message }) => {
+      setSendError(message);
+      if (pendingDraftRef.current) {
+        setText(pendingDraftRef.current);
+        pendingDraftRef.current = null;
+      }
+    });
+
     return () => {
+      socket.off("connect", joinTeamRoom);
       socket.off("receiveMessage");
       socket.off("messageDeleted");
+      socket.off("messageSaved");
+      socket.off("chatError");
     };
   }, [socket, user?.team]);
 
@@ -75,6 +95,8 @@ function Chat() {
   const handleSend = (e) => {
     e.preventDefault();
     if (!text.trim()) return;
+    pendingDraftRef.current = text;
+    setSendError("");
     socket.emit("sendMessage", {
       teamId: user.team,
       senderId: user._id,
@@ -184,7 +206,17 @@ function Chat() {
           })}
           <div ref={messagesEndRef} />
         </div>
-
+        {sendError && (
+          <p
+            style={{
+              color: "#ef4444",
+              fontSize: "0.85rem",
+              margin: "0 0 0.5rem",
+            }}
+          >
+            {sendError}
+          </p>
+        )}
         <form onSubmit={handleSend} className={styles.inputForm}>
           <input
             type="text"
