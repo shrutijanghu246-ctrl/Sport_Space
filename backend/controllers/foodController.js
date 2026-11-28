@@ -27,7 +27,7 @@ const searchFoods = async (req, res) => {
 const getAllFoods = async (req, res) => {
   try {
     console.log("📋 Fetching all foods");
-    const foods = (await Food.find()).sort({ name: 1 });
+    const foods = await Food.find().sort({ name: 1 });
     console.log("✅ Found", foods.length, "foods");
     res.status(200).json({ foods });
   } catch (err) {
