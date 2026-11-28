@@ -1,5 +1,8 @@
 const express = require("express");
+const validateObjectId = require("../middleware/validateObjectId");
 const router = express.Router();
+router.param("id", validateObjectId("id"));
+router.param("teamId", validateObjectId("teamId"));
 const {
   getTeamMessages,
   deleteForMe,

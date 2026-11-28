@@ -1,5 +1,9 @@
 const express = require("express");
+const validateObjectId = require("../middleware/validateObjectId");
 const router = express.Router();
+router.param("id", validateObjectId("id"));
+router.param("userId", validateObjectId("userId"));
+
 const {
   updateGender,
   register,

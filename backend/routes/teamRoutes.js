@@ -1,5 +1,9 @@
 const express = require("express");
 const router = express.Router();
+const validateObjectId = require("../middleware/validateObjectId");
+router.param("id", validateObjectId("id"));
+router.param("teamId", validateObjectId("teamId"));
+router.param("achievementId", validateObjectId("achievementId"));
 const {
   createTeam,
   getAllTeams,

@@ -10,7 +10,10 @@ const {
   deleteComment,
 } = require("../controllers/postController");
 const { isLoggedIn } = require("../middleware/authMiddleware");
-
+const validateObjectId = require("../middleware/validateObjectId");
+router.param("commentId", validateObjectId("commentId"));
+router.param("id", validateObjectId("id"));
+router.param("teamId", validateObjectId("teamId"));
 router.get("/public", getPublicFeed); //no login required
 router.post("/", isLoggedIn, createPost);
 router.get("/team/:teamId", isLoggedIn, getTeamFeed);

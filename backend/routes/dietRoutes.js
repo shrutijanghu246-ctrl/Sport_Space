@@ -1,5 +1,9 @@
 const express = require("express");
+const validateObjectId = require("../middleware/validateObjectId");
+
 const router = express.Router();
+router.param("athleteId", validateObjectId("athleteId"));
+router.param("id", validateObjectId("id"));
 const {
   createDietLog,
   getMyDietLogs,
