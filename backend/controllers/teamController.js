@@ -225,6 +225,43 @@ const removeMember = async (req, res) => {
   }
 };
 
+//leave your own team (frees captain seat / coach role if held)
+const leaveTeam = async (req, res) => {
+  try {
+    const team = await Team.findById(req.params.id);
+
+    if (!team) {
+      return res.status(404).json({ message: "Team not found" });
+    }
+
+    const userId = req.user._id.toString();
+    if (req.user.team?.toString() !== team._id.toString()) {
+      return res.status(400).json({ message: "You are not in this team" });
+    }
+
+    for (const slot of ["boys", "girls"]) {
+      if (team.captain?.[slot]?.toString() === userId)
+        team.captain[slot] = null;
+    }
+    if (team.coach?.toString() === userId) team.coach = null;
+    team.members = team.members.filter(
+      (member) => member.toString() !== userId,
+    );
+    await team.save();
+
+    await User.updateOne(
+      { _id: userId, team: team._id },
+      { $set: { team: null } },
+    );
+    await evictUserTeamSockets(req.app.get("io"), userId);
+
+    res.status(200).json({ message: "Left team successfully" });
+  } catch (err) {
+    console.error("LEAVE TEAM ERROR:", err.message, err.stack);
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+};
+
 const joinTeam = async (req, res) => {
   try {
     const team = await Team.findById(req.params.id);
@@ -348,5 +385,6 @@ module.exports = {
   removeMember,
   addAchievement,
   deleteAchievement,
+  leaveTeam,
   joinTeam,
 };

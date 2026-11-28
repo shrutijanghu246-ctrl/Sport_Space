@@ -8,7 +8,7 @@ import { formatRole } from "../utils/formatRole";
 import NoTeam from "../components/NoTeam";
 
 function TeamPage() {
-  const { user } = useAuth();
+  const { user, login } = useAuth();
   const navigate = useNavigate();
   const [team, setTeam] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -26,6 +26,18 @@ function TeamPage() {
     };
     if (user?.team) fetchTeam();
   }, [user?.team]);
+  const handleLeave = async () => {
+    if (!window.confirm("Leave this team? Your seat will open up.")) return;
+    try {
+      await axiosInstance.post(`/teams/${user.team}/leave`);
+      const res = await axiosInstance.get("/auth/me");
+      login(res.data.user);
+      navigate("/teams");
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   if (!user?.team) return <NoTeam message="Join a team to view its page." />;
 
   if (loading) return <div className={styles.loading}>Loading team...</div>;
@@ -45,6 +57,20 @@ function TeamPage() {
             <p className={styles.teamDesc}>{team.description}</p>
           )}
         </div>
+        <button
+          onClick={handleLeave}
+          style={{
+            marginLeft: "auto",
+            background: "none",
+            border: "1px solid #ef4444",
+            color: "#ef4444",
+            borderRadius: "6px",
+            padding: "0.4rem 0.9rem",
+            cursor: "pointer",
+          }}
+        >
+          Leave Team
+        </button>
       </div>
 
       {/* Leadership */}

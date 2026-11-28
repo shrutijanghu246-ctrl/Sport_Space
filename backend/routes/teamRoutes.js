@@ -10,6 +10,7 @@ const {
   getTeam,
   addMember,
   removeMember,
+  leaveTeam,
   addAchievement,
   deleteAchievement,
   createTeamAndJoin,
@@ -60,5 +61,6 @@ router.delete(
 );
 
 router.post("/:id/join", isLoggedIn, joinTeam);
+router.post("/:id/leave", isLoggedIn, leaveTeam);
 
 module.exports = router;
