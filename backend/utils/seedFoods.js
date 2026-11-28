@@ -193,8 +193,13 @@ const seedFoods = async () => {
     await mongoose.connect(process.env.MONGODB_URI, { family: 4 });
     console.log("MongoDB connected ✅");
 
-    await Food.deleteMany({});
-    await Food.insertMany(foods);
+    for (const food of foods) {
+      await Food.updateOne(
+        { name: food.name },
+        { $set: food },
+        { upsert: true },
+      );
+    }
 
     console.log(`✅ Seeded ${foods.length} foods successfully!`);
     process.exit(0);
